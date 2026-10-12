@@ -22,7 +22,10 @@
     "uji:pengaturan": "tsx scripts/uji-pengaturan.ts",
     "uji:layout": "tsx scripts/uji-layout.ts",
     "seed:demo": "tsx scripts/seed-demo.ts",
-    "uji:beranda": "tsx scripts/uji-beranda.ts"
+    "uji:beranda": "tsx scripts/uji-beranda.ts",
+    "cek:konten": "tsx scripts/cek-konten.ts",
+    "build:rilis": "npm run cek:konten -- --strict && next build",
+    "uji:profil": "tsx scripts/uji-profil.ts"
   },
   "dependencies": {
     "@auth/core": "^0.41.3",

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, MapPin, Phone } from "lucide-react";
 import { LogoSitus } from "@/components/site/logo";
-import { site, alamatSatuBaris, petaLinkUrl } from "@/config/site";
+import {alamatSatuBaris, petaLinkUrl, site, wilayahSingkat } from "@/config/site";
 
 /**
  * Bagian pembuka beranda.
@@ -66,7 +66,7 @@ export function Hero({
 
               <p className="flex items-center gap-1.5 text-sm text-muted-foreground sm:ml-2">
                 <MapPin className="size-4 shrink-0 opacity-70" aria-hidden />
-                {site.address.subdistrict}, {site.address.city}
+                {wilayahSingkat()}
               </p>
             </div>
           </div>

@@ -80,21 +80,29 @@ export const site = {
     "TODO URL Instagram resmi sekolah",
   ],
 
-  /** Statistik beranda — boleh diperbarui tiap tahun oleh admin */
+  /**
+   * Statistik beranda.
+   * Jumlah guru dan ekstrakurikuler diambil dari database sehingga selalu
+   * sinkron dengan isi situs, jadi tidak ada di sini.
+   */
   stats: {
-    students: 0, // TODO
-    teachers: 0, // TODO
-    extracurriculars: 0, // TODO
-    foundedYear: 0, // TODO
+    students: 0,
   },
 } as const;
 
 export type SiteConfig = typeof site;
 
-/** Nama environmentally: "Secangkang, Kabupaten Sik" (dipakai di GEO & JSON-LD) */
+/**
+ * Wilayah singkat, mis. "Secangkang, Kabupaten Sik, Kalimantan Timur".
+ *
+ * Bagian yang masih berupa placeholder dilewati, sehingga teks "TODO"
+ * tidak pernah muncul di halaman publik.
+ */
 export function wilayahSingkat(): string {
   const a = site.address;
-  return [a.subdistrict, a.city, a.province].filter(Boolean).join(", ");
+  return [a.subdistrict, a.city, a.province]
+    .filter((bagian) => bagian && !bagian.startsWith("TODO"))
+    .join(", ");
 }
 
 /** Alamat satu baris, sama persis dengan yang muncul di footer & JSON-LD */

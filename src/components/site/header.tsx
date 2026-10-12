@@ -1,6 +1,6 @@
 import { Container } from "@/components/site/container";
 import { NavigasiSitus } from "@/components/site/navigasi";
-import { site } from "@/config/site";
+import { site, wilayahSingkat } from "@/config/site";
 
 /**
  * Kepala situs.
@@ -28,10 +28,7 @@ export function SiteHeader({ logoId }: { logoId: string | null }) {
                 ? ` - berdiri sejak ${site.identity.foundedYear}`
                 : ""}
             </p>
-            <p className="truncate">
-              {site.address.subdistrict}, {site.address.city},{" "}
-              {site.address.province}
-            </p>
+            <p className="truncate">{wilayahSingkat()}</p>
           </div>
         </Container>
       </div>
