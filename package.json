@@ -29,7 +29,8 @@
     "uji:daftar": "tsx scripts/uji-daftar.ts",
     "seed:galeri-uji": "tsx scripts/seed-galeri-uji.ts",
     "uji:galeri": "tsx scripts/uji-galeri.ts",
-    "uji:seo": "tsx scripts/uji-seo.ts"
+    "uji:seo": "tsx scripts/uji-seo.ts",
+    "uji:jsonld": "tsx scripts/uji-jsonld.ts"
   },
   "dependencies": {
     "@auth/core": "^0.41.3",

@@ -12,6 +12,7 @@ import {
 } from "@/lib/queries/konten";
 import { jumlahStaff } from "@/lib/queries/staff";
 import { fotoTerbaru, jumlahAlbum } from "@/lib/queries/albums";
+import { JsonLd, jsonLdSekolah, jsonLdSitus } from "@/lib/json-ld";
 import { profil } from "@/config/profil";
 import { site } from "@/config/site";
 
@@ -36,6 +37,13 @@ export default async function Beranda() {
 
   return (
     <>
+      {/*
+        Data terstruktur untuk mesin pencari dan mesin AI.
+        School dan WebSite adalah dua skema yang paling sering dibaca
+        mesin AI saat menjawab pertanyaan tentang sebuah sekolah.
+      */}
+      <JsonLd data={[jsonLdSekolah(), jsonLdSitus()]} />
+
       <Hero logoId={pengaturan.logoMediaId} nama={site.name} />
 
       <div className="border-b bg-background">
