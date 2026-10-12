@@ -84,7 +84,12 @@ function Pratinjau({ primary, accent }: { primary: string; accent: string }) {
       </div>
 
       <div className="space-y-2 p-3">
-        <h4 className="text-sm font-semibold">Judul bagian</h4>
+        {/*
+          Pratinjau visual, bukan bagian dari kerangka dokumen. styled
+          seperti judul bagian publik, tetapi memakai <p> supaya tidak
+          ikut masuk ke urutan heading pembaca layar.
+        */}
+        <p className="text-sm font-semibold">Judul bagian</p>
         <p className="text-xs opacity-70">
           Contoh teks isi paragraf untuk memeriksa keterbacaan.
         </p>

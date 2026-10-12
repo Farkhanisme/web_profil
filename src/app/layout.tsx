@@ -38,11 +38,16 @@ export async function generateMetadata(): Promise<Metadata> {
     publisher: site.name,
     alternates: { canonical: "/" },
     formatDetection: { telephone: true, address: true },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: { index: true, follow: true, "max-image-preview": "large", "max-video-preview": -1, "max-snippet": -1 },
-    },
+    /*
+      `robots` tidak ditulis di sini. Nilai bawaan Next.js sudah
+      `index, follow`, jadi menyebutkannya secara eksplisit tidak
+      menambah apa pun, tetapi bocor ke halaman 404: ketika sebuah
+      alamat mati dan halamannya dialirkan (soft 404), Next.js
+      menyuntik tag `noindex`, sementara tag `index, follow` dari
+      layout ikut terbawa sehingga ada dua perintah yang bertentangan
+      dalam satu dokumen. Halaman yang perlu Larangan indeks
+      (/admin/login dan halaman 404) mendeklarasikannya sendiri.
+    */
     verification: verifikasiPencari(),
     openGraph: {
       type: "website",

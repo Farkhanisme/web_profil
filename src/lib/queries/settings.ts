@@ -19,7 +19,7 @@ export interface PengaturanSitus {
   themeAccent: string;
   logoMediaId: string | null;
   logo: MediaDTO | null;
-  /** true bila nilai masih sama dengan bawaan bawaan */
+  /** true bila nilai masih sama dengan warna bawaan */
   memakaiBawaan: boolean;
 }
 

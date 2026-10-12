@@ -91,7 +91,7 @@ export async function simpanLogo(
 }
 
 /**
- * Kembalikan warna ke bawaan bawaan.
+ * Kembalikan warna ke warna bawaan.
  * Logo tidak disentuh, karena pengguna biasanya tetap ingin memakai
  * logo yang sama setelah bereksperimen dengan warna.
  */

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import { Container } from "@/components/site/container";
 import { LogoSitus, NamaSitus } from "@/components/site/logo";
+import { TahunBerjalan } from "@/components/site/tahun";
 import { MENU_PUBLIK } from "@/config/navigation";
 import { site, alamatSatuBaris, petaLinkUrl } from "@/config/site";
 
@@ -11,9 +12,11 @@ import { site, alamatSatuBaris, petaLinkUrl } from "@/config/site";
  * Berisi NAP (nama, alamat, telepon) yang persis sama dengan yang
  * dipakai di header, JSON-LD, dan halaman kontak. Konsistensi NAP
  * penting karena mesin AI membandingkan beberapa sumber.
+ *
+ * Logo diteruskan dari layout publik, sama seperti di header, agar
+ * keduanya menampilkan lambang yang sama begitu admin mengunggahnya.
  */
-export function SiteFooter() {
-  const tahun = 2026;
+export function SiteFooter({ logoId }: { logoId: string | null }) {
 
   return (
     <footer className="mt-auto border-t bg-muted/40">
@@ -22,7 +25,7 @@ export function SiteFooter() {
           {/* Identitas */}
           <div className="space-y-3 sm:col-span-2 lg:col-span-1">
             <Link href="/" className="flex items-center gap-2.5">
-              <LogoSitus mediaId={null} ukuran={40} />
+              <LogoSitus mediaId={logoId} ukuran={40} />
               <NamaSitus tampilkanSlogan />
             </Link>
             <p className="text-sm leading-relaxed text-muted-foreground">
@@ -111,7 +114,8 @@ export function SiteFooter() {
 
         <div className="flex flex-col gap-2 border-t py-5 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <p>
-            Copyright {tahun} {site.name}. Seluruh hak cipta dilindungi.
+            Copyright <TahunBerjalan /> {site.name}. Seluruh hak cipta
+            dilindungi.
           </p>
           <p>
             Dibangun dengan bantuan kecerdasan buatan, disunting dan

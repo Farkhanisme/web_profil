@@ -31,7 +31,8 @@
     "uji:galeri": "tsx scripts/uji-galeri.ts",
     "uji:seo": "tsx scripts/uji-seo.ts",
     "uji:jsonld": "tsx scripts/uji-jsonld.ts",
-    "qa": "tsx scripts/qa.ts"
+    "qa": "tsx scripts/qa.ts",
+    "ux": "tsx scripts/analisis-ux.ts"
   },
   "dependencies": {
     "@auth/core": "^0.41.3",

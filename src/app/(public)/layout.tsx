@@ -32,7 +32,7 @@ export default async function LayoutPublic({
         {children}
       </main>
 
-      <SiteFooter />
+      <SiteFooter logoId={pengaturan.logoMediaId} />
     </div>
   );
 }

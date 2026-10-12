@@ -35,7 +35,7 @@ export default async function HalamanPengaturan({
       ) : null}
       {params.reset === "1" ? (
         <div className="mb-4 rounded-lg border border-primary/30 bg-primary-soft px-4 py-3 text-sm text-primary">
-          Warna dikembalikan ke bawaan bawaan.
+          Warna dikembalikan ke warna bawaan.
         </div>
       ) : null}
 
@@ -54,9 +54,9 @@ export default async function HalamanPengaturan({
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <TombolResetTema />
           <p className="text-xs text-muted-foreground">
-            Warna bawaan bawaan: {BAWAAN.primary} dan {BAWAAN.accent}.
+            Warna bawaan: {BAWAAN.primary} dan {BAWAAN.accent}.
             {pengaturan.memakaiBawaan
-              ? " Situs sedang memakai bawaan bawaan."
+              ? " Situs sedang memakai warna bawaan."
               : " Situs sedang memakai warna pilihan sendiri."}
           </p>
         </div>

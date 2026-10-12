@@ -1,6 +1,17 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/site/container";
 import { MENU_PUBLIK } from "@/config/navigation";
+
+/**
+ * Halaman 404 tidak boleh masuk indeks, apa pun status HTTP yang
+ * akhirnya dikirim. Ketika halaman dialirkan, Next.js memang menyuntik
+ * tag `noindex`, tetapi menyebutkannya sendiri membuat kedua hal ini
+ * tidak bergantung pada perilaku tersebut.
+ */
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 /**
  * Halaman 404.
