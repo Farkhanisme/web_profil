@@ -18,7 +18,8 @@
     "uji:kompresi": "tsx scripts/uji-kompresi.ts",
     "uji:staff": "tsx scripts/uji-crud-staff.ts",
     "uji:konten": "tsx scripts/uji-crud-konten.ts",
-    "uji:album": "tsx scripts/uji-crud-album.ts"
+    "uji:album": "tsx scripts/uji-crud-album.ts",
+    "uji:pengaturan": "tsx scripts/uji-pengaturan.ts"
   },
   "dependencies": {
     "@auth/core": "^0.41.3",
