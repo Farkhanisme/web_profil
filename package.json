@@ -25,7 +25,8 @@
     "uji:beranda": "tsx scripts/uji-beranda.ts",
     "cek:konten": "tsx scripts/cek-konten.ts",
     "build:rilis": "npm run cek:konten -- --strict && next build",
-    "uji:profil": "tsx scripts/uji-profil.ts"
+    "uji:profil": "tsx scripts/uji-profil.ts",
+    "uji:daftar": "tsx scripts/uji-daftar.ts"
   },
   "dependencies": {
     "@auth/core": "^0.41.3",
