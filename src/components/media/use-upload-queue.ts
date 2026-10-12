@@ -106,9 +106,18 @@ export function useUploadQueue() {
     [],
   );
 
-  /** Jalankan antrean satu per satu sampai habis. */
+  /**
+   * Jalankan antrean satu per satu sampai habis.
+   *
+   * `selesaiSatu` dipanggil setelah setiap berkas sukses terunggah, bukan
+   * hanya di akhir. Ini yang membuat satu berkas bisa langsung disimpan ke
+   * database tanpa menunggu berkas lain selesai.
+   */
   const jalankan = useCallback(
-    async (daftar: Array<{ id: string; file: File }>) => {
+    async (
+      daftar: Array<{ id: string; file: File }>,
+      selesaiSatu?: (hasil: { mediaId: string; nama: string }) => void | Promise<void>,
+    ) => {
       if (sedangJalan.current) return;
       sedangJalan.current = true;
 
@@ -131,6 +140,22 @@ export function useUploadQueue() {
             );
 
             perbarui(id, { status: "selesai", progres: 100, mediaId });
+
+            // Simpan ke database sebelum lanjut ke berkas berikutnya.
+            // Bila pemanggil gagal menyimpan, berkas ini tetap tercatat
+            // sebagai gagal tanpa menghentikan berkas lain.
+            if (selesaiSatu) {
+              try {
+                await selesaiSatu({ mediaId, nama: file.name });
+              } catch (galatSimpan) {
+                perbarui(id, {
+                  galat:
+                    galatSimpan instanceof Error
+                      ? `Foto terunggah tetapi gagal disimpan: ${galatSimpan.message}`
+                      : "Foto terunggah tetapi gagal disimpan.",
+                });
+              }
+            }
           } catch (galat) {
             perbarui(id, {
               status: "gagal",
@@ -151,7 +176,10 @@ export function useUploadQueue() {
 
   /** Tambahkan berkas baru ke antrean lalu langsung jalankan. */
   const tambah = useCallback(
-    async (files: File[]) => {
+    async (
+      files: File[],
+      selesaiSatu?: (hasil: { mediaId: string; nama: string }) => void | Promise<void>,
+    ) => {
       const sisa = MAKS_PER_SESI - items.length;
       if (sisa <= 0) {
         return {
@@ -179,6 +207,7 @@ export function useUploadQueue() {
 
       await jalankan(
         baru.map((item, i) => ({ id: item.id, file: diterima[i]! })),
+        selesaiSatu,
       );
 
       return {
