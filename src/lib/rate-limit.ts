@@ -1,7 +1,7 @@
 import "server-only";
 
-import { createHmac } from "node:crypto";
 import { headers } from "next/headers";
+import { hashIp } from "@/lib/ip";
 import { db } from "@/lib/db";
 import { nowSeconds } from "@/lib/db/client";
 
@@ -22,12 +22,6 @@ export interface RateLimitResult {
   remaining: number;
   /** detik sampai jendela berikutnya dimulai */
   retryAfter: number;
-}
-
-/** Hash stabil untuk alamat IP. Dipakai sebagai bagian dari kunci rate limit. */
-export function hashIp(ip: string): string {
-  const secret = process.env.AUTH_SECRET ?? "dev-secret";
-  return createHmac("sha256", secret).update(ip).digest("hex").slice(0, 32);
 }
 
 /**
