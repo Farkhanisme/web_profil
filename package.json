@@ -11,7 +11,9 @@
     "typecheck": "tsc --noEmit",
     "migrate": "tsx scripts/migrate.ts",
     "seed:admin": "tsx scripts/seed-admin.ts",
-    "backup:media": "tsx scripts/backup-media.ts"
+    "backup:media": "tsx scripts/backup-media.ts",
+    "uji:auth": "tsx scripts/uji-auth.ts",
+    "uji:rate-limit": "tsx scripts/uji-rate-limit.ts"
   },
   "dependencies": {
     "@auth/core": "^0.41.3",

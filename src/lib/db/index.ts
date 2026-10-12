@@ -55,7 +55,7 @@ export async function execute<T = RawRow>(
 }
 
 /** Jalankan beberapa statement dalam satu transaksi (atomic). */
-export async function transaction<T>(
+export async function transaction(
   statements: Array<[string, InValue[]?]>,
 ): Promise<void> {
   if (statements.length === 0) return;

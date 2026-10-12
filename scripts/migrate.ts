@@ -12,10 +12,13 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { createDb, resolveDatabaseUrl } from "../src/lib/db/client";
 import { splitSqlStatements } from "../src/lib/db/sql";
+import { loadEnv } from "./load-env";
 
 const MIGRATIONS_DIR = join(process.cwd(), "db", "migrations");
 
 async function main(): Promise<void> {
+  loadEnv();
+
   const url = resolveDatabaseUrl();
   const db = createDb(url);
 
