@@ -119,6 +119,8 @@ export interface Staff {
   position: string;
   subject: string;
   photo: MediaDTO | null;
+  /** true bila tampil di halaman publik */
+  isPublished: boolean;
 }
 
 export interface Program {
@@ -188,6 +190,7 @@ export function staffToDTO(
     position: row.position,
     subject: row.subject,
     photo: mediaToDTO(photo),
+    isPublished: toBool(row.is_published),
   };
 }
 
