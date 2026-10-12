@@ -6,6 +6,7 @@ import { DaftarDenganJudul } from "@/components/site/kosong";
 import { KartuKonten } from "@/components/site/kartu";
 import { ekstrakurikulerTerbit } from "@/lib/queries/konten";
 import { JsonLd, jsonLdRemahRoti } from "@/lib/json-ld";
+import { metadataDasar, verifikasiPencari } from "@/lib/seo";
 import { site } from "@/config/site";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -16,14 +17,8 @@ export async function generateMetadata(): Promise<Metadata> {
       : `Kegiatan ekstrakurikuler MTs Ma'arif Tieng, ${site.address.city}, ${site.address.province}.`;
 
   return {
-    title: "Ekstrakurikuler",
-    description: deskripsi,
-    alternates: { canonical: "/ekstrakurikuler" },
-    openGraph: {
-      title: `Ekstrakurikuler | ${site.name}`,
-      description: deskripsi,
-      url: "/ekstrakurikuler",
-    },
+    ...(await metadataDasar("Ekstrakurikuler", deskripsi, "/ekstrakurikuler")),
+    verification: verifikasiPencari(),
   };
 }
 

@@ -3,6 +3,13 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { site, baseUrl } from "@/config/site";
 import { pengaturanSitus } from "@/lib/queries/settings";
+import {
+  DESKRIPSI_UMUM,
+  deskripsi,
+  gambarOg,
+  judulLengkap,
+  verifikasiPencari,
+} from "@/lib/seo";
 import { hitungTema } from "@/lib/color";
 import { blokCssTema, warnaMetaPeramban } from "@/lib/theme-css";
 
@@ -15,37 +22,54 @@ const fontSans = Plus_Jakarta_Sans({
 
 export async function generateMetadata(): Promise<Metadata> {
   const pengaturan = await pengaturanSitus();
-  const gambarOgp = pengaturan.logo
-    ? `/media/${pengaturan.logo.id}?w=1600`
-    : undefined;
 
   return {
     metadataBase: new URL(baseUrl()),
     title: {
+      // Halaman beranda memakai nama sekolah apa adanya; halaman lain
+      // mendapat nama sekolah dari template ini.
       default: `${site.name} - ${site.tagline}`,
       template: `%s | ${site.name}`,
     },
-    description: site.description,
+    description: deskripsi(DESKRIPSI_UMUM),
     applicationName: site.name,
     authors: [{ name: site.name, url: baseUrl() }],
     creator: site.name,
+    publisher: site.name,
     alternates: { canonical: "/" },
+    formatDetection: { telephone: true, address: true },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: { index: true, follow: true, "max-image-preview": "large", "max-video-preview": -1, "max-snippet": -1 },
+    },
+    verification: verifikasiPencari(),
     openGraph: {
       type: "website",
       locale: "id_ID",
       url: "/",
       siteName: site.name,
-      title: `${site.name} - ${site.tagline}`,
-      description: site.description,
-      ...(gambarOgp ? { images: [{ url: gambarOgp, width: 1200, height: 630, alt: site.name }] } : {}),
+      title: judulLengkap(site.tagline),
+      description: deskripsi(DESKRIPSI_UMUM),
+      ...(pengaturan.logo
+        ? {
+            images: [
+              {
+                url: gambarOg(pengaturan.logo.id),
+                width: 1200,
+                height: 630,
+                alt: pengaturan.logo.alt || site.name,
+              },
+            ],
+          }
+        : {}),
     },
     twitter: {
       card: "summary_large_image",
-      title: `${site.name} - ${site.tagline}`,
-      description: site.description,
-      ...(gambarOgp ? { images: [gambarOgp] } : {}),
+      title: judulLengkap(site.tagline),
+      description: deskripsi(DESKRIPSI_UMUM),
+      ...(pengaturan.logo ? { images: [gambarOg(pengaturan.logo.id)] } : {}),
     },
-    formatDetection: { telephone: true, address: true },
   };
 }
 

@@ -7,6 +7,7 @@ import { KartuKonten } from "@/components/site/kartu";
 import { programTerbit } from "@/lib/queries/konten";
 import { JsonLd, jsonLdRemahRoti } from "@/lib/json-ld";
 import { site } from "@/config/site";
+import { metadataDasar, verifikasiPencari } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const daftar = await programTerbit();
@@ -16,14 +17,8 @@ export async function generateMetadata(): Promise<Metadata> {
       : `Program sekolah MTs Ma'arif Tieng, ${site.address.city}, ${site.address.province}.`;
 
   return {
-    title: "Program Sekolah",
-    description: deskripsi,
-    alternates: { canonical: "/program" },
-    openGraph: {
-      title: `Program Sekolah | ${site.name}`,
-      description: deskripsi,
-      url: "/program",
-    },
+    ...(await metadataDasar("Program Sekolah", deskripsi, "/program")),
+    verification: verifikasiPencari(),
   };
 }
 

@@ -7,6 +7,7 @@ import { KartuStaff } from "@/components/site/kartu";
 import { staffTerbit } from "@/lib/queries/staff";
 import { JsonLd, jsonLdRemahRoti } from "@/lib/json-ld";
 import { site } from "@/config/site";
+import { metadataDasar, verifikasiPencari } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const daftar = await staffTerbit();
@@ -16,14 +17,8 @@ export async function generateMetadata(): Promise<Metadata> {
       : `Guru dan staf MTs Ma'arif Tieng, ${site.address.city}, ${site.address.province}.`;
 
   return {
-    title: "Guru dan Staf",
-    description: deskripsi,
-    alternates: { canonical: "/guru" },
-    openGraph: {
-      title: `Guru dan Staf | ${site.name}`,
-      description: deskripsi,
-      url: "/guru",
-    },
+    ...(await metadataDasar("Guru dan Staf", deskripsi, "/guru")),
+    verification: verifikasiPencari(),
   };
 }
 

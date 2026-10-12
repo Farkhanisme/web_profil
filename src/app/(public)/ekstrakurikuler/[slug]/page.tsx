@@ -13,7 +13,7 @@ import {
 } from "@/lib/queries/konten";
 import { JsonLd, jsonLdRemahRoti } from "@/lib/json-ld";
 import { formatTanggal } from "@/lib/utils";
-import { site } from "@/config/site";
+import { metadataDasar } from "@/lib/seo";
 
 /** Semua kegiatan di-prerender saat build. Kegiatan yang baru ditambahkan
  *  tetap muncul lewat cache halaman. */
@@ -37,30 +37,23 @@ export async function generateMetadata({
     };
   }
 
-  const deskripsi = kegiatan.summary || site.description;
+  const gambar = kegiatan.image
+    ? { id: kegiatan.image.id, alt: kegiatan.image.alt || kegiatan.name }
+    : undefined;
+
+  const dasar = await metadataDasar(
+    kegiatan.name,
+    kegiatan.summary,
+    `/ekstrakurikuler/${kegiatan.slug}`,
+    gambar,
+  );
 
   return {
-    title: kegiatan.name,
-    description: deskripsi,
-    alternates: { canonical: `/ekstrakurikuler/${kegiatan.slug}` },
+    ...dasar,
     openGraph: {
+      ...dasar.openGraph,
       type: "article",
-      title: `${kegiatan.name} | ${site.name}`,
-      description: deskripsi,
-      url: `/ekstrakurikuler/${kegiatan.slug}`,
       modifiedTime: new Date(kegiatan.updatedAt * 1000).toISOString(),
-      ...(kegiatan.image
-        ? {
-            images: [
-              {
-                url: `/media/${kegiatan.image.id}?w=1600`,
-                width: 1200,
-                height: 630,
-                alt: kegiatan.image.alt || kegiatan.name,
-              },
-            ],
-          }
-        : {}),
     },
   };
 }

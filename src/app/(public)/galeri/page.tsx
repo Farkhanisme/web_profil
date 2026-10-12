@@ -8,23 +8,19 @@ import { GambarMedia } from "@/components/site/gambar-media";
 import { albumSemua } from "@/lib/queries/albums";
 import { JsonLd, jsonLdRemahRoti } from "@/lib/json-ld";
 import { site } from "@/config/site";
+import { metadataDasar, verifikasiPencari } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const album = await albumSemua();
+  const totalFoto = album.reduce((n, a) => n + a.photoCount, 0);
   const deskripsi =
     album.length > 0
-      ? `Galeri foto kegiatan MTs Ma'arif Tieng: ${album.length} album, ${album.reduce((n, a) => n + a.photoCount, 0)} foto.`
+      ? `Galeri foto kegiatan MTs Ma'arif Tieng: ${album.length} album, ${totalFoto} foto.`
       : `Galeri foto kegiatan MTs Ma'arif Tieng, ${site.address.city}, ${site.address.province}.`;
 
   return {
-    title: "Galeri",
-    description: deskripsi,
-    alternates: { canonical: "/galeri" },
-    openGraph: {
-      title: `Galeri | ${site.name}`,
-      description: deskripsi,
-      url: "/galeri",
-    },
+    ...(await metadataDasar("Galeri", deskripsi, "/galeri")),
+    verification: verifikasiPencari(),
   };
 }
 

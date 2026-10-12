@@ -1,11 +1,15 @@
+import type { Metadata } from "next";
+import { metadataDasar } from "@/lib/seo";
 import { Container } from "@/components/site/container";
 import { BreadcrumbAtas } from "@/components/site/breadcrumb";
 
-export const metadata = {
-  title: "Kebijakan Privasi",
-  description:
+export async function generateMetadata(): Promise<Metadata> {
+  return metadataDasar(
+    "Kebijakan Privasi",
     "Kebijakan privasi singkat: data yang dikumpulkan situs ini, kegunaannya, dan bagaimana mengelolanya.",
-};
+    "/kebijakan-privasi",
+  );
+}
 
 /**
  * Halaman kebijakan privasi.

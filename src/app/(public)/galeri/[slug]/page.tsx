@@ -11,6 +11,7 @@ import { albumBySlug, semuaSlugAlbum, fotoAlbum } from "@/lib/queries/albums";
 import { JsonLd, jsonLdRemahRoti } from "@/lib/json-ld";
 import { formatTanggal } from "@/lib/utils";
 import { site } from "@/config/site";
+import { metadataDasar } from "@/lib/seo";
 
 export async function generateStaticParams() {
   const slug = await semuaSlugAlbum();
@@ -32,32 +33,17 @@ export async function generateMetadata({
     };
   }
 
-  const deskripsi =
-    album.description ||
-    `Foto ${album.title} di MTs Ma'arif Tieng, ${site.address.city}, ${site.address.province}.`;
+  const gambar = album.cover
+    ? { id: album.cover.id, alt: album.cover.alt || album.title }
+    : undefined;
 
-  return {
-    title: album.title,
-    description: deskripsi,
-    alternates: { canonical: `/galeri/${album.slug}` },
-    openGraph: {
-      title: `${album.title} | ${site.name}`,
-      description: deskripsi,
-      url: `/galeri/${album.slug}`,
-      ...(album.cover
-        ? {
-            images: [
-              {
-                url: `/media/${album.cover.id}?w=1600`,
-                width: 1200,
-                height: 630,
-                alt: album.cover.alt || album.title,
-              },
-            ],
-          }
-        : {}),
-    },
-  };
+  return await metadataDasar(
+    album.title,
+    album.description ||
+      `Foto ${album.title} di MTs Ma'arif Tieng, ${site.address.city}, ${site.address.province}.`,
+    `/galeri/${album.slug}`,
+    gambar,
+  );
 }
 
 export default async function HalamanAlbum({

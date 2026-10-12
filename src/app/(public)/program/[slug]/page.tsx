@@ -10,7 +10,7 @@ import { Paragraf } from "@/components/site/kartu";
 import { programBySlug, semuaSlugProgram } from "@/lib/queries/konten";
 import { JsonLd, jsonLdRemahRoti } from "@/lib/json-ld";
 import { formatTanggal } from "@/lib/utils";
-import { site } from "@/config/site";
+import { metadataDasar } from "@/lib/seo";
 
 /** Semua slug di-prerender saat build. Detail lain tetap bisa diakses
  *  lewat ISR, sehingga program yang baru ditambahkan tetap muncul. */
@@ -36,30 +36,23 @@ export async function generateMetadata({
     };
   }
 
-  const deskripsi = program.summary || site.description;
+  const gambar = program.image
+    ? { id: program.image.id, alt: program.image.alt || program.name }
+    : undefined;
+
+  const dasar = await metadataDasar(
+    program.name,
+    program.summary,
+    `/program/${program.slug}`,
+    gambar,
+  );
 
   return {
-    title: program.name,
-    description: deskripsi,
-    alternates: { canonical: `/program/${program.slug}` },
+    ...dasar,
     openGraph: {
+      ...dasar.openGraph,
       type: "article",
-      title: `${program.name} | ${site.name}`,
-      description: deskripsi,
-      url: `/program/${program.slug}`,
       modifiedTime: new Date(program.updatedAt * 1000).toISOString(),
-      ...(program.image
-        ? {
-            images: [
-              {
-                url: `/media/${program.image.id}?w=1600`,
-                width: 1200,
-                height: 630,
-                alt: program.image.alt || program.name,
-              },
-            ],
-          }
-        : {}),
     },
   };
 }

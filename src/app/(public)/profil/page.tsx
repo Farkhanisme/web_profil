@@ -14,12 +14,14 @@ import {
 } from "@/lib/json-ld";
 import { profil } from "@/config/profil";
 import { site } from "@/config/site";
+import { metadataDasar, verifikasiPencari } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Profil Sekolah",
-  description: profil.ringkasan,
-  alternates: { canonical: "/profil" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    ...(await metadataDasar("Profil Sekolah", profil.ringkasan, "/profil")),
+    verification: verifikasiPencari(),
+  };
+}
 
 /** Bagian yang judulnya ditandai ikon. */
 function SubBagian({
