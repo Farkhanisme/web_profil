@@ -1,0 +1,186 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* ============================================================
+   TOKEN DASAR (dipakai shadcn/ui)
+   ============================================================ */
+:root {
+  --radius: 0.75rem;
+
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.21 0.006 286);
+
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.21 0.006 286);
+
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.21 0.006 286);
+
+  --muted: oklch(0.967 0.001 286);
+  --muted-foreground: oklch(0.552 0.016 286);
+
+  --secondary: oklch(0.967 0.001 286);
+  --secondary-foreground: oklch(0.21 0.006 286);
+
+  /* shadcn memakai `accent` sebagai permukaan highlight (dropdown, select),
+     BUKAN warna merek. Warna merek memakai token `brand*` di bawah. */
+  --accent: oklch(0.962 0.004 286);
+  --accent-foreground: oklch(0.21 0.006 286);
+
+  --destructive: oklch(0.577 0.208 27.3);
+  --destructive-foreground: oklch(0.985 0 0);
+
+  --border: oklch(0.92 0.004 286);
+  --input: oklch(0.92 0.004 286);
+  --ring: var(--brand);
+
+  /* ==========================================================
+     WARNA MEREK — ditulis server dari pengaturan CMS (tabel settings)
+     Layout root mengoverride nilai ini lewat <style> di <head>,
+     sehingga tidak ada kedipan warna (FOUC) saat halaman dimuat.
+     ========================================================== */
+  --brand: #047857;
+  --brand-hover: #065f46;
+  --brand-soft: #ecfdf5;
+  --on-brand: #ffffff;
+
+  --brand-accent: #b45309;
+  --brand-accent-soft: #fffbeb;
+  --on-brand-accent: #ffffff;
+}
+
+.dark {
+  --background: oklch(0.19 0.006 286);
+  --foreground: oklch(0.96 0.001 286);
+  --card: oklch(0.22 0.006 286);
+  --card-foreground: oklch(0.96 0.001 286);
+  --popover: oklch(0.22 0.006 286);
+  --popover-foreground: oklch(0.96 0.001 286);
+  --muted: oklch(0.27 0.006 286);
+  --muted-foreground: oklch(0.7 0.014 286);
+  --secondary: oklch(0.27 0.006 286);
+  --secondary-foreground: oklch(0.96 0.001 286);
+  --accent: oklch(0.32 0.006 286);
+  --accent-foreground: oklch(0.96 0.001 286);
+  --border: oklch(0.32 0.006 286);
+  --input: oklch(0.32 0.006 286);
+}
+
+/* ============================================================
+   PETA KE UTILITAS TAILWIND
+   @theme inline -> nilai ikut di-resolve saat runtime, sehingga
+   mengubah --brand di <head> langsung mengubah seluruh situs.
+   ============================================================ */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* primary = warna merek utama (bisa diganti admin lewat CMS) */
+  --color-primary: var(--brand);
+  --color-primary-foreground: var(--on-brand);
+  --color-primary-hover: var(--brand-hover);
+  --color-primary-soft: var(--brand-soft);
+
+  /* brand-accent = warna aksen merek, terpisah dari `accent` shadcn */
+  --color-brand-accent: var(--brand-accent);
+  --color-brand-accent-soft: var(--brand-accent-soft);
+  --color-brand-accent-foreground: var(--on-brand-accent);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+
+  /* Animasi ringan: hanya transform & opacity, tanpa layout thrash */
+  --animate-fade-up: fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-fade-in: fade-in 0.4s ease-out both;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Fokus keyboard yang konsisten dan terlihat (aksesibilitas) */
+  :focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background-color: var(--brand);
+    color: var(--on-brand);
+  }
+}
+
+@layer components {
+  /* Konsistensi tinggi: judul bagian */
+  .section-title {
+    @apply text-2xl font-bold tracking-tight text-foreground sm:text-3xl;
+  }
+
+  .section-subtitle {
+    @apply mt-2 max-w-2xl text-base leading-relaxed text-muted-foreground;
+  }
+}
+
+/* Hormati preferensi pengguna yang sensitif terhadap gerak */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
