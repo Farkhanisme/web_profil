@@ -1,47 +1,90 @@
-import Link from "next/link";
-import { Bagian, Container } from "@/components/site/container";
-import { JudulBagian, PageHeader } from "@/components/site/page-header";
+import { Hero } from "@/components/site/hero";
+import { Statistik } from "@/components/site/statistik";
+import { Sambutan } from "@/components/site/sambutan";
+import { PotongKonten } from "@/components/site/potong-konten";
+import { PotongGaleri } from "@/components/site/potong-galeri";
+import { BlokKontak } from "@/components/site/blok-kontak";
+import { pengaturanSitus } from "@/lib/queries/settings";
+import {
+  ekstrakurikulerTerbit,
+  jumlahEkstrakurikuler,
+  programTerbit,
+} from "@/lib/queries/konten";
+import { jumlahStaff } from "@/lib/queries/staff";
+import { fotoTerbaru, jumlahAlbum } from "@/lib/queries/albums";
+import { profil } from "@/config/profil";
 import { site } from "@/config/site";
 
 /**
- * Beranda sementara.
+ * Beranda.
  *
- * Isi lengkap dibangun pada T11. Yang penting sekarang: layout publik
- * (header, navigasi, footer) sudah tampil dan terbaca mesin.
+ * Seluruh isi diambil dari kueri bertag, sehingga halaman ini
+ * di-prerender dan dilayani dari CDN. Begitu admin menyimpan data,
+ * `updateTag()` membuat halaman ini diperbarui tanpa deploy ulang.
  */
-export default function Beranda() {
+export default async function Beranda() {
+  const [pengaturan, program, ekstrakurikuler, guru, jmlEkstra, album, foto] =
+    await Promise.all([
+      pengaturanSitus(),
+      programTerbit(),
+      ekstrakurikulerTerbit(),
+      jumlahStaff(),
+      jumlahEkstrakurikuler(),
+      jumlahAlbum(),
+      fotoTerbaru(6),
+    ]);
+
   return (
     <>
-      <PageHeader
-        judul={site.name}
-        deskripsi={site.description}
-        eyebrow="Sekolah"
+      <Hero logoId={pengaturan.logoMediaId} nama={site.name} />
+
+      <div className="border-b bg-background">
+        <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+          <Statistik
+            siswa={site.stats.students > 0 ? site.stats.students : null}
+            guru={guru > 0 ? guru : null}
+            ekstrakurikuler={jmlEkstra > 0 ? jmlEkstra : null}
+            tahunBerdiri={
+              site.identity.foundedYear > 0 ? site.identity.foundedYear : null
+            }
+          />
+        </div>
+      </div>
+
+      <Sambutan
+        nama={profil.sambutan.nama}
+        jabatan={profil.sambutan.jabatan}
+        teks={[...profil.sambutan.teks]}
       />
 
-      <Container>
-        <Bagian>
-          <JudulBagian judul="Halaman yang sedang disiapkan" />
-          <p className="max-w-2xl text-muted-foreground">
-            Layout publik sudah aktif. Isi setiap halaman menyusul: profil
-            sekolah, daftar guru, program, ekstrakurikuler, galeri, dan
-            kontak.
-          </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link
-              href="/profil"
-              className="rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover"
-            >
-              Lihat profil
-            </Link>
-            <Link
-              href="/kontak"
-              className="rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors hover:bg-muted"
-            >
-              Hubungi kami
-            </Link>
-          </div>
-        </Bagian>
-      </Container>
+      <PotongKonten
+        judul="Program Sekolah"
+        deskripsi="Program pembelajaran di sekolah."
+        slugPrefix="program"
+        semua={program}
+      />
+
+      <PotongKonten
+        judul="Ekstrakurikuler"
+        deskripsi="Kegiatan pilihan untuk mengembangkan minat dan bakat siswa."
+        slugPrefix="ekstrakurikuler"
+        semua={ekstrakurikuler}
+        tampilkanJadwal
+      />
+
+      <PotongGaleri
+        foto={foto.map((f) => ({
+          id: f.id,
+          mediaId: f.mediaId,
+          caption: f.caption,
+          width: f.width,
+          height: f.height,
+          alt: f.alt,
+        }))}
+        adaAlbum={album > 0}
+      />
+
+      <BlokKontak />
     </>
   );
 }

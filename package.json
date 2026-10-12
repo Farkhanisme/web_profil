@@ -20,7 +20,9 @@
     "uji:konten": "tsx scripts/uji-crud-konten.ts",
     "uji:album": "tsx scripts/uji-crud-album.ts",
     "uji:pengaturan": "tsx scripts/uji-pengaturan.ts",
-    "uji:layout": "tsx scripts/uji-layout.ts"
+    "uji:layout": "tsx scripts/uji-layout.ts",
+    "seed:demo": "tsx scripts/seed-demo.ts",
+    "uji:beranda": "tsx scripts/uji-beranda.ts"
   },
   "dependencies": {
     "@auth/core": "^0.41.3",

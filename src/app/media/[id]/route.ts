@@ -12,12 +12,12 @@ const PLACEHOLDER = Buffer.from(
 /** Lebar memuat penuh. Tanpa w, berkas asli dikirim apa adanya. */
 const LEBAR_PENUH = 1600;
 
-function headerCacheImmutable(): Record<string, string> {
+function headerCacheImmutable(tipe = "image/webp"): Record<string, string> {
   return {
     // Imagery tidak pernah berubah pada id yang sama: setiap unggahan
     // mendapat id baru, jadi cache ini selalu benar.
     "Cache-Control": "public, max-age=31536000, immutable",
-    "Content-Type": "image/webp",
+    "Content-Type": tipe,
     // Aman: berkas keluar dari route ini tanpa data pengguna.
     "Cross-Origin-Resource-Policy": "cross-origin",
   };
@@ -62,7 +62,17 @@ export async function GET(
 
     // Tanpa w: kirim berkas apa adanya supaya browser pun tidak
     // melakukan dekode ulang yang tidak perlu.
-    if (lebarDiminta === null && media.width > LEBAR_PENUH) {
+    if (lebarDiminta === null) {
+      // Tanpa parameter w: berkas dikirim apa adanya. Untuk logo SVG
+      // ini penting, sebab tipe aslinya bukan WebP.
+      if (media.mime === "image/webp") {
+        return new Response(new Uint8Array(buffer), {
+          status: 200,
+          headers: headerCacheImmutable(media.mime),
+        });
+      }
+
+      // Berkas lain dikonversi ke WebP supaya seragam dan ringan.
       const resized = await sharp(buffer)
         .resize({ width: LEBAR_PENUH, withoutEnlargement: true })
         .webp({ quality: 82 })

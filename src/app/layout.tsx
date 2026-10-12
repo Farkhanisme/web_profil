@@ -16,7 +16,7 @@ const fontSans = Plus_Jakarta_Sans({
 export async function generateMetadata(): Promise<Metadata> {
   const pengaturan = await pengaturanSitus();
   const gambarOgp = pengaturan.logo
-    ? `/media/${pengaturan.logo.id}?w=1200`
+    ? `/media/${pengaturan.logo.id}?w=1600`
     : undefined;
 
   return {

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { site } from "@/config/site";
 import { cn } from "@/lib/utils";
 
@@ -6,33 +5,38 @@ import { cn } from "@/lib/utils";
  * Logo sekolah.
  *
  * Logo diambil dari pengaturan CMS. Bila admin belum mengunggah logo,
- * dipakai lambang cadangan berisi inisial nama madrasah agar situs
+ * dipakai lambang cadangan berisi huruf awal nama madrasah agar situs
  * tidak pernah tampil tanpa identitas.
+ *
+ * Memakai <img> biasa: berkas sudah melewati proxy /media/[id] yang
+ * melakukan resize dan cache, sehingga optimizer kedua tidak perlu.
  */
 export function LogoSitus({
   mediaId,
-  width = 0,
-  height = 0,
   className,
   ukuran = 40,
+  prioritas = false,
 }: {
   mediaId: string | null;
-  width?: number;
-  height?: number;
   className?: string;
   /** Sisi gambar dalam piksel. */
   ukuran?: number;
+  /** true untuk logo di hero: dimuat paling awal untuk LCP. */
+  prioritas?: boolean;
 }) {
   if (mediaId) {
     return (
-      <Image
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
         src={`/media/${mediaId}?w=240`}
         alt={site.name}
-        width={width || ukuran}
-        height={height || ukuran}
+        width={ukuran}
+        height={ukuran}
+        loading={prioritas ? "eager" : "lazy"}
+        decoding={prioritas ? "sync" : "async"}
+        fetchPriority={prioritas ? "high" : "auto"}
         className={cn("shrink-0 object-contain", className)}
         style={{ width: ukuran, height: ukuran }}
-        priority
       />
     );
   }
