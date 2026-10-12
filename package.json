@@ -19,7 +19,8 @@
     "uji:staff": "tsx scripts/uji-crud-staff.ts",
     "uji:konten": "tsx scripts/uji-crud-konten.ts",
     "uji:album": "tsx scripts/uji-crud-album.ts",
-    "uji:pengaturan": "tsx scripts/uji-pengaturan.ts"
+    "uji:pengaturan": "tsx scripts/uji-pengaturan.ts",
+    "uji:layout": "tsx scripts/uji-layout.ts"
   },
   "dependencies": {
     "@auth/core": "^0.41.3",
