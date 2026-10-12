@@ -16,7 +16,8 @@
     "uji:rate-limit": "tsx scripts/uji-rate-limit.ts",
     "uji:media": "tsx scripts/uji-media.ts",
     "uji:kompresi": "tsx scripts/uji-kompresi.ts",
-    "uji:staff": "tsx scripts/uji-crud-staff.ts"
+    "uji:staff": "tsx scripts/uji-crud-staff.ts",
+    "uji:konten": "tsx scripts/uji-crud-konten.ts"
   },
   "dependencies": {
     "@auth/core": "^0.41.3",

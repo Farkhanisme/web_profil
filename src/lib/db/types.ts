@@ -130,6 +130,7 @@ export interface Program {
   summary: string;
   description: string;
   image: MediaDTO | null;
+  isPublished: boolean;
   updatedAt: number;
 }
 
@@ -142,6 +143,7 @@ export interface Extracurricular {
   schedule: string;
   coach: string;
   image: MediaDTO | null;
+  isPublished: boolean;
   updatedAt: number;
 }
 
@@ -205,6 +207,7 @@ export function programToDTO(
     summary: row.summary,
     description: row.description,
     image: mediaToDTO(image),
+    isPublished: toBool(row.is_published),
     updatedAt: row.updated_at,
   };
 }
@@ -222,6 +225,7 @@ export function extracurricularToDTO(
     schedule: row.schedule,
     coach: row.coach,
     image: mediaToDTO(image),
+    isPublished: toBool(row.is_published),
     updatedAt: row.updated_at,
   };
 }
