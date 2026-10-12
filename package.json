@@ -14,7 +14,8 @@
     "backup:media": "tsx scripts/backup-media.ts",
     "uji:auth": "tsx scripts/uji-auth.ts",
     "uji:rate-limit": "tsx scripts/uji-rate-limit.ts",
-    "uji:media": "tsx scripts/uji-media.ts"
+    "uji:media": "tsx scripts/uji-media.ts",
+    "uji:kompresi": "tsx scripts/uji-kompresi.ts"
   },
   "dependencies": {
     "@auth/core": "^0.41.3",
@@ -22,6 +23,7 @@
     "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "cn": "^0.4.0",
     "lucide-react": "^1.55.0",
     "nanoid": "^6.0.2",
     "next": "16.4.0",
