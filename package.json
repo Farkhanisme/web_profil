@@ -30,7 +30,8 @@
     "seed:galeri-uji": "tsx scripts/seed-galeri-uji.ts",
     "uji:galeri": "tsx scripts/uji-galeri.ts",
     "uji:seo": "tsx scripts/uji-seo.ts",
-    "uji:jsonld": "tsx scripts/uji-jsonld.ts"
+    "uji:jsonld": "tsx scripts/uji-jsonld.ts",
+    "qa": "tsx scripts/qa.ts"
   },
   "dependencies": {
     "@auth/core": "^0.41.3",

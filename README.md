@@ -77,6 +77,10 @@ melewati migrasi yang sudah pernah diterapkan.
 | `npm run migrate`        | Menjalankan migrasi SQL yang belum dipakai           |
 | `npm run seed:admin`     | Membuat atau memperbarui akun admin                 |
 | `npm run backup:media`   | Mengunduh seluruh media ke folder lokal              |
+| `npm run seed:demo`     | Mengisi data contoh agar situs bisa dinilai           |
+| `npm run cek:konten`    | Daftar placeholder yang masih tersisa                |
+| `npm run build:rilis`   | Cek konten ketat lalu build, gagal bila ada placeholder|
+| `npm run qa`            | Mengukur halaman publik, menulis `docs/laporan-qa.md`  |
 
 ## Struktur
 
@@ -88,6 +92,20 @@ src/components/      Komponen UI (ui/ = shadcn, sisanya komponen proyek)
 src/config/          site.ts (identitas & NAP) dan profil.ts (konten profil)
 src/lib/             Klien DB, kueri bertipe, utilitas warna, Telegram
 ```
+
+## Pemeriksaan sebelum rilis
+
+```bash
+npm run lint && npm run typecheck
+npm run build
+npm run cek:konten      # harus melaporkan "tidak ada placeholder"
+npm run qa              # menulis docs/laporan-qa.md
+npm run build:rilis     # gabungan cek konten ketat + build
+```
+
+`npm run qa` mengukur ukuran halaman, waktu respons, tautan yang rusak,
+teks alternatif gambar, struktur heading, dan kontras warna. Lighthouse
+resmi tetap dijalankan manual setelah deploy karena membutuhkan Chrome.
 
 ## Catatan operasional
 
