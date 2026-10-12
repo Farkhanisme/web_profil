@@ -44,6 +44,28 @@ Turso. Ganti `TURSO_DATABASE_URL` dan `TURSO_AUTH_TOKEN` untuk memakai Turso.
 | `TELEGRAM_BOT_TOKEN`  | tidak | Kosong = memakai penyimpanan lokal sebagai pengganti      |
 | `TELEGRAM_CHAT_ID`    | tidak | ID grup privat tempat bot menjadi admin                 |
 
+## Skema database
+
+Sepuluh tabel dibuat oleh `db/migrations/0001_init.sql`:
+
+| Tabel              | Isi                                                        |
+| ------------------ | ---------------------------------------------------------- |
+| `admins`           | satu baris: email, `password_hash`, waktu dibuat            |
+| `media`            | satu baris per gambar (referensi berkas di Telegram/lokal) |
+| `settings`         | key/value: warna tema, `logo_media_id`                      |
+| `staff`            | guru dan staf, hanya kolom yang aman dipublikasikan        |
+| `programs`         | program sekolah, slug unik                                 |
+| `extracurriculars` | kegiatan ekstrakurikuler, slug unik                        |
+| `albums`           | album galeri                                               |
+| `photos`           | foto di dalam album (ikut terhapus bila album dihapus)     |
+| `messages`         | pesan form kontak, `ip_hash` bukan IP mentah               |
+| `rate_limits`      | penghitung jendela untuk login dan form kontak             |
+
+Konvensi: kolom `id` bertipe `TEXT` (nanoid), waktu epoch detik (`INTEGER`),
+boolean `INTEGER` 0/1. Menambah tabel cukup dengan membuat berkas
+`db/migrations/0002_....sql` lalu menjalankan `npm run migrate` — skrip
+melewati migrasi yang sudah pernah diterapkan.
+
 ## Skrip
 
 | Perintah                 | Fungsi                                              |
