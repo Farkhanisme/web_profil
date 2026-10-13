@@ -6,8 +6,8 @@ import { susunLlmsFullTxt } from "@/lib/llms";
  * Berisi profil, visi, misi, struktur, fasilitas, dan seluruh
  * pertanyaan umum. Ditautkan dari /llms.txt.
  */
-export function GET(): Response {
-  return new Response(susunLlmsFullTxt(), {
+export async function GET(): Promise<Response> {
+  return new Response(await susunLlmsFullTxt(), {
     headers: {
       "Content-Type": "text/plain; charset=utf-8",
       "Cache-Control": "public, max-age=3600, s-maxage=86400",

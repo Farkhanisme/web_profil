@@ -82,15 +82,61 @@ melewati migrasi yang sudah pernah diterapkan.
 | `npm run build:rilis`   | Cek konten ketat lalu build, gagal bila ada placeholder|
 | `npm run qa`            | Mengukur halaman publik, menulis `docs/laporan-qa.md`  |
 
+## Prototype FE — Blok Warna Madrasah
+
+Tiga halaman untuk dinilai: `/`, `/profil`, `/guru`.
+
+```bash
+npm run dev    # lalu buka http://localhost:3000
+```
+
+Audiens: anak kelas 6 yang akan bersekolah di sini, dan orang tua yang
+mengambil keputusan serta browsanya WhatsApp dan Facebook.
+
+| Bagian | Pekat | Muda | Teks |
+| ------ | ----- | ---- | ---- |
+| Profil, sejarah | hijau `#047857` | `#d1fae5` | `#065f46` |
+| Program, metabah | jingga `#c2410c` | `#ffedd5` | `#7c2d12` |
+| Guru, galeri | biru `#1e40af` | `#dbeafe` | `#1e3a8a` |
+| Pendaftaran | kuning `#ca8a04` | `#fef9c3` | `#713f12` |
+
+Tiga aturan warna (angka kontras ada di komentar `globals.css`):
+
+1. Setiap bagian punya satu warna identitas, jadi orang tua mengenali
+   bagian tanpa membaca, seperti gelembung berwarna di WhatsApp.
+2. Warna tidak pernah dipakai untuk teks kecil di atas warna. Teks kecil
+   selalu gelap di atas latar muda, atau putih di atas blok pekat.
+3. Varian terang hanya untuk garis bawah, dekorasi, dan ikon.
+
+Kuning pekat `#ca8a04` hanya 3,3:1 terhadap teks putih, jadi tidak boleh
+menjadi latar teks. Blok pendaftaran karena itu memakai kuning muda dengan
+teks coklat tua.
+
+Empat aturan struktural untuk audiens ini:
+
+1. Tombol WhatsApp mengambang ada di semua halaman, karena orang tua sering
+   membuka satu halaman dari tautan WhatsApp tanpa lewat beranda.
+2. Bar navigasi bawah di ponsel dengan empat tujuan, seperti tab WhatsApp.
+3. Teks dasar 17px di layar kecil.
+4. Target sentuh minimal 48px.
+
+Font: **Outfit** untuk judul, **Plus Jakarta Sans** untuk teks.
+
+Isi halaman masih contoh dan berada di `src/lib/contoh.ts`. Ganti dengan
+`bacaProfil()` dan `bacaSitus()` begitu data sekolah asli tersedia.
+
 ## Struktur
 
 ```
 db/migrations/       Migrasi SQL bernomor (dijalankan scripts/migrate.ts)
-scripts/             Skrip operasional (migrate, seed-admin, backup-media)
-src/app/             Route App Router (publik, /admin, /api, /media)
-src/components/      Komponen UI (ui/ = shadcn, sisanya komponen proyek)
-src/config/          site.ts (identitas & NAP) dan profil.ts (konten profil)
-src/lib/             Klien DB, kueri bertipe, utilitas warna, Telegram
+scripts/             Skrip operasional dan uji backend (migrate, seed, uji media)
+src/app/             Halaman, Route Handler, Route metadata, dan Server Action
+src/app/actions/     Server Action: albums, kontak, konten, messages, profil, settings, staff
+src/app/globals.css  Token desain "Blok Warna Madrasah"
+src/components/site/ Komponen FE: dasar, blok, kerangka, navigasi, wa
+src/config/          site.ts (identitas & NAP), profil.ts (konten), navigation.ts
+src/lib/             Klien DB, kueri bertipe, skema Zod, auth, rate limit, media, Telegram
+src/types/           Deklarasi tipe untuk NextAuth
 ```
 
 ## Pemeriksaan sebelum rilis
@@ -99,13 +145,12 @@ src/lib/             Klien DB, kueri bertipe, utilitas warna, Telegram
 npm run lint && npm run typecheck
 npm run build
 npm run cek:konten      # harus melaporkan "tidak ada placeholder"
-npm run qa              # menulis docs/laporan-qa.md
 npm run build:rilis     # gabungan cek konten ketat + build
 ```
 
-`npm run qa` mengukur ukuran halaman, waktu respons, tautan yang rusak,
-teks alternatif gambar, struktur heading, dan kontras warna. Lighthouse
-resmi tetap dijalankan manual setelah deploy karena membutuhkan Chrome.
+Ukuran halaman, waktu respons, tautan rusak, dan kontras warna diukur
+oleh `npm run qa` yang sudah dihapus bersama halaman FE. Buat ulang skrip itu,
+atau pakai Lighthouse resmi setelah deploy, begitu FE lengkap.
 
 ## Catatan operasional
 

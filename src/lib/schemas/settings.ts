@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { KONTRAS_MINIMUM, kontrasDenganPutih } from "@/lib/color";
+import { KONTRAS_MINIMUM, kontrasDenganPutih, kontrasTerbaik } from "@/lib/color";
 
 /** Warna harus hex 6 digit, misalnya #047857. */
 const hexSchema = z
@@ -27,9 +27,27 @@ export const warnaUtamaSchema = hexSchema.superRefine((hex, ctx) => {
 /** Warna aksen: format benar saja, karena tidak dipakai sebagai latar teks putih. */
 export const warnaAksenSchema = hexSchema;
 
+/**
+ * Warna ketiga.
+ *
+ * Tidak boleh terlalu muda: warna ini dipakai sebagai latar blok dengan
+ * teks putih, jadi harus tetap punya kontras terhadap salah satu dari
+ * putih atau gelap.
+ */
+export const warnaKetigaSchema = hexSchema.superRefine((hex, ctx) => {
+  const kontras = kontrasTerbaik(hex);
+  if (kontras < KONTRAS_MINIMUM) {
+    ctx.addIssue({
+      code: "custom",
+      message: `Kontras ${kontras.toFixed(2)}:1 terlalu rendah. Warna ketiga dipakai sebagai latar blok, jadi perlu minimal ${KONTRAS_MINIMUM}:1 terhadap teks terang atau gelap.`,
+    });
+  }
+});
+
 export const temaSchema = z.object({
   theme_primary: warnaUtamaSchema,
   theme_accent: warnaAksenSchema,
+  theme_alt: warnaKetigaSchema,
 });
 
 export const logoSchema = z.object({

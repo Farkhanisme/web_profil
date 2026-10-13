@@ -1,27 +1,19 @@
-import {
-  GraduationCap,
-  Images,
-  Home,
-  Mail,
-  School,
-  Sparkles,
-  Users,
-} from "lucide-react";
+import { Home, School, Users, UserPlus } from "lucide-react";
 
 /**
  * Menu situs publik.
  *
- * Dipakai bersama oleh navigasi desktop, menu seluler, footer, dan
- * breadcrumb, sehingga satu perubahan cukup di satu tempat.
+ * Ringkas: empat tujuan yang benar-benar dipakai orang tua. Menu yang
+ * panjang justru memperlambat orang tua yang terbiasa dengan
+ * empat tab di WhatsApp.
+ *
+ * Ikon memakai lucide-react agar konsisten dengan stroke yang sama.
  */
 export const MENU_PUBLIK = [
   { href: "/", label: "Beranda", ikon: Home },
   { href: "/profil", label: "Profil", ikon: School },
   { href: "/guru", label: "Guru dan Staf", ikon: Users },
-  { href: "/program", label: "Program", ikon: GraduationCap },
-  { href: "/ekstrakurikuler", label: "Ekstrakurikuler", ikon: Sparkles },
-  { href: "/galeri", label: "Galeri", ikon: Images },
-  { href: "/kontak", label: "Kontak", ikon: Mail },
+  { href: "/#daftar", label: "Daftar", ikon: UserPlus },
 ] as const;
 
 /** Label breadcrumb untuk segmen URL yang tidak bisa ditebak. */

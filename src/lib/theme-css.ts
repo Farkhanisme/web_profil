@@ -17,6 +17,9 @@ export function blokCssTema(t: VariabelTema): string {
     `--brand-accent:${t.accent};`,
     `--brand-accent-soft:${t.accentSoft};`,
     `--on-brand-accent:${t.onAccent};`,
+    `--brand-alt:${t.alt};`,
+    `--brand-alt-soft:${t.altSoft};`,
+    `--on-brand-alt:${t.onAlt};`,
     "}",
   ].join("");
 }

@@ -1,14 +1,23 @@
+import type { IsiSitus } from "@/lib/konten";
+
 /**
  * Konfigurasi identitas & data tetap sekolah.
  *
- * Semua nilai di sini dipakai bersama oleh: halaman publik, footer NAP,
- * metadata SEO, JSON-LD, sitemap, dan /llms.txt. Pastikan NAP (nama, alamat,
- * telepon) konsisten di mana pun — mesin AI mengutip dari beberapa sumber.
+ * PERAN PENTING: file ini adalah NILAI BAWAAN, bukan sumber kebenaran.
+ * Semua teks di sini dapat diubah pengelola lewat CMS
+ * (`/admin/profil`). `src/lib/queries/profil.ts` membaca database lalu
+ * menyambungkan setiap kolom kosong dengan nilai di bawah, sehingga:
+ *   - situs yang belum pernah disentuh CMS tampil persis seperti ini,
+ *   - tidak ada konten yang hilang saat fitur CMS dipasang.
  *
- * TODO(SEKOLAH): ganti seluruh nilai bertanda TODO dengan data resmi sekolah.
+ * Yang TIDAK bisa diubah lewat CMS (bernilai teknis atau tidak pernah berubah):
+ *   - `url` (dari env), `openingHours`, `sameAs`, `address.country`.
+ *
+ * TODO(SEKOLAH): nilai bertanda TODO di bawah hanya dipakai sebagai
+ * cadangan. Setelah diisi lewat CMS, nilai di sini tidak lagi tampil.
  */
 
-export const site = {
+export const site: IsiSitus = {
   /** Nama resmi, persis sama dengan di NPSN/EMIS */
   name: "MTs Ma'arif Tieng",
   /** Nama untuk judul tab dan navigasi */
@@ -17,7 +26,7 @@ export const site = {
   legalName: "Madrasah Tsanawiyah Ma'arif Tieng",
   tagline: "Berakhlak, Berilmu, Berprestasi",
   description:
-    "MTs Ma'arif Tieng adalah madrasah tsanawiyah swasta di Secangkang, Kabupaten Sik, Kalimantan Timur. Menyediakan pendidikan Islam terpadu yang menggabungkan ilmu agama dan ilmu pengetahuan umum.",
+    "MTs Ma'arif Tieng adalah madrasah tsanawiyah swasta di Desa Tieng, Kecamatan Kejajar, Kabupaten Wonosobo. Menyediakan pendidikan Islam terpadu yang menggabungkan ilmu agama dan ilmu pengetahuan umum.",
 
   /**
    * URL dasar situs untuk metadata & canonical.
@@ -39,24 +48,33 @@ export const site = {
 
   address: {
     street: "TODO Nama jalan dan nomor",
-    village: "TODO Kelurahan",
-    subdistrict: "Secangkang",
-    city: "TODO Kabupaten",
-    province: "Kalimantan Timur",
+    village: "Tieng",
+    subdistrict: "Kejajar",
+    city: "Kabupaten Wonosobo",
+    province: "Jawa Tengah",
     postalCode: "TODO Kode pos",
     country: "ID",
   },
 
-  /** Koordinat desimal untuk peta dan JSON-LD `geo` */
+  /**
+   * Koordinat desimal untuk peta dan JSON-LD `geo`.
+   * Perkiraan pusat Desa Tieng, Kejajar — ganti dengan koordinat
+   * titik pasti gedung sekolah sebelum rilis.
+   */
   geo: {
-    latitude: Number(-0.4905),
-    longitude: Number(117.3702),
+    latitude: Number(-7.3975),
+    longitude: Number(109.9736),
   },
 
   contact: {
     phone: "TODO nomor telepon",
     /** Email resmi sekolah */
     email: "TODO email sekolah",
+    /**
+     * Nomor WhatsApp sekolah dalam format internasional tanpa tanda "+".
+     * TODO(RILIS): ganti dengan nomor resmi sekolah sebelum production.
+     */
+    whatsapp: "6281234567890",
   },
 
   /** Jam layanan — dipakai untuk JSON-LD `openingHoursSpecification` */
@@ -71,9 +89,12 @@ export const site = {
       opens: "07:00",
       closes: "12:00",
     },
-  ] as const,
+  ],
 
-  /** Tautan resmi sekolah di luar situs ini (JSON-LD `sameAs`) */
+  /**
+   * Tautan resmi sekolah di luar situs ini (JSON-LD `sameAs`).
+   * TODO(SEKOLAH): ganti bila sudah ada kanal resmi.
+   */
   sameAs: [
     "TODO URL Facebook resmi sekolah",
     "TODO URL YouTube resmi sekolah",
@@ -88,30 +109,9 @@ export const site = {
   stats: {
     students: 0,
   },
-} as const;
+};
 
 export type SiteConfig = typeof site;
-
-/**
- * Wilayah singkat, mis. "Secangkang, Kabupaten Sik, Kalimantan Timur".
- *
- * Bagian yang masih berupa placeholder dilewati, sehingga teks "TODO"
- * tidak pernah muncul di halaman publik.
- */
-export function wilayahSingkat(): string {
-  const a = site.address;
-  return [a.subdistrict, a.city, a.province]
-    .filter((bagian) => bagian && !bagian.startsWith("TODO"))
-    .join(", ");
-}
-
-/** Alamat satu baris, sama persis dengan yang muncul di footer & JSON-LD */
-export function alamatSatuBaris(): string {
-  const a = site.address;
-  return [a.street, a.village, a.subdistrict, a.city, a.province]
-    .filter((part) => part && !String(part).startsWith("TODO"))
-    .join(", ");
-}
 
 /** URL absolut untuk canonical/OG. Fallback ke domain Vercel saat env kosong. */
 export function baseUrl(): string {
@@ -126,16 +126,4 @@ export function baseUrl(): string {
 
 export function absoluteUrl(path: string): string {
   return `${baseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
-}
-
-/** Tautan embed Google Maps tanpa API key */
-export function petaEmbedUrl(): string {
-  const { latitude, longitude } = site.geo;
-  return `https://www.google.com/maps?q=${latitude},${longitude}&hl=id&z=15&output=embed`;
-}
-
-/** Tautan "Buka di Google Maps" */
-export function petaLinkUrl(): string {
-  const { latitude, longitude } = site.geo;
-  return `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
 }

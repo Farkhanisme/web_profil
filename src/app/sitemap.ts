@@ -5,7 +5,7 @@ import {
   semuaSlugProgram,
 } from "@/lib/queries/konten";
 import { semuaSlugAlbum } from "@/lib/queries/albums";
-import { profil } from "@/config/profil";
+import { bacaProfil } from "@/lib/queries/profil";
 
 /**
  * Peta situs.
@@ -42,6 +42,7 @@ const HALAMAN_STATIS: Array<[string, number, Frekuensi]> = [
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const dasar = baseUrl();
 
+  const profil = await bacaProfil();
   const tanggalProfil = Math.floor(
     Date.parse(`${profil.updatedAt}T00:00:00Z`) / 1000,
   );

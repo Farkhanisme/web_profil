@@ -1,6 +1,7 @@
-import { site, alamatSatuBaris, petaLinkUrl, baseUrl } from "@/config/site";
-import { profil } from "@/config/profil";
+import { baseUrl } from "@/config/site";
 import { labelSegmen } from "@/config/navigation";
+import { bacaProfil, bacaSitus } from "@/lib/queries/profil";
+import { alamatSatuBaris, petaLinkUrl, terisi, tahunTerisi } from "@/lib/konten";
 
 /** Nama hari dalam bahasa Indonesia, dipakai di llms.txt. */
 const NAMA_HARI: Record<string, string> = {
@@ -26,6 +27,9 @@ function labelHalaman(jalur: string): string {
  *
  * llms-full.txt memuat isi lengkap, sedangkan berkas ini hanya
  * ringkasan dan daftar halaman penting.
+ *
+ * Seluruh isinya dibaca dari CMS, sehingga mesin AI melihat data yang sama
+ * dengan pengunjung — termasuk identitas, kontak, dan isi profil.
  */
 
 /** Halaman yang dijelaskan satu per satu, sesuai urutan kepentingan. */
@@ -67,7 +71,8 @@ function bersih(nilai: string): string {
     .trim();
 }
 
-export function susunLlmsTxt(): string {
+export async function susunLlmsTxt(): Promise<string> {
+  const site = await bacaSitus();
   const dasar = baseUrl();
   const baris: string[] = [];
 
@@ -77,7 +82,7 @@ export function susunLlmsTxt(): string {
   baris.push("");
 
   const wilayah = [site.address.city, site.address.province]
-    .filter((b) => b && !b.startsWith("TODO"))
+    .filter((b) => terisi(b))
     .join(", ");
   baris.push(
     bersih(
@@ -88,16 +93,11 @@ export function susunLlmsTxt(): string {
 
   baris.push("## Identitas");
   baris.push("");
-  if (site.identity.npsn && !site.identity.npsn.startsWith("TODO")) {
-    baris.push(`- NPSN: ${site.identity.npsn}`);
-  }
-  if (
-    site.identity.accreditation &&
-    !site.identity.accreditation.startsWith("TODO")
-  ) {
+  if (terisi(site.identity.npsn)) baris.push(`- NPSN: ${site.identity.npsn}`);
+  if (terisi(site.identity.accreditation)) {
     baris.push(`- Akreditasi: ${site.identity.accreditation}`);
   }
-  if (site.identity.foundedYear > 0) {
+  if (tahunTerisi(site.identity.foundedYear)) {
     baris.push(`- Tahun berdiri: ${site.identity.foundedYear}`);
   }
   baris.push(`- Jenjang: Madrasah Tsanawiyah (kelas VII sampai IX)`);
@@ -108,15 +108,14 @@ export function susunLlmsTxt(): string {
 
   baris.push("## Lokasi dan Kontak");
   baris.push("");
-  baris.push(`- Alamat: ${alamatSatuBaris() || "belum dilengkapi"}`);
+  baris.push(`- Alamat: ${alamatSatuBaris(site) || "belum dilengkapi"}`);
   baris.push(
-    `- Koordinat: ${site.geo.latitude}, ${site.geo.longitude} (${petaLinkUrl()})`,
+    `- Koordinat: ${site.geo.latitude}, ${site.geo.longitude} (${petaLinkUrl(site)})`,
   );
-  if (site.contact.phone && !site.contact.phone.startsWith("TODO")) {
-    baris.push(`- Telepon: ${site.contact.phone}`);
-  }
-  if (site.contact.email && !site.contact.email.startsWith("TODO")) {
-    baris.push(`- Email: ${site.contact.email}`);
+  if (terisi(site.contact.phone)) baris.push(`- Telepon: ${site.contact.phone}`);
+  if (terisi(site.contact.email)) baris.push(`- Email: ${site.contact.email}`);
+  if (terisi(site.contact.whatsapp)) {
+    baris.push(`- WhatsApp: ${site.contact.whatsapp}`);
   }
   for (const j of site.openingHours) {
     baris.push(
@@ -153,7 +152,8 @@ export function susunLlmsTxt(): string {
 }
 
 /** Versi lengkap: profil dan pertanyaan umum. */
-export function susunLlmsFullTxt(): string {
+export async function susunLlmsFullTxt(): Promise<string> {
+  const [site, profil] = await Promise.all([bacaSitus(), bacaProfil()]);
   const dasar = baseUrl();
   const baris: string[] = [];
 
@@ -177,31 +177,24 @@ export function susunLlmsFullTxt(): string {
   baris.push(`- Bentuk: ${site.identity.status}`);
   baris.push(`- Jenjang: Madrasah Tsanawiyah (kelas VII sampai IX)`);
   baris.push(`- Kurikulum: ${site.identity.curriculum}`);
-  if (site.identity.npsn && !site.identity.npsn.startsWith("TODO")) {
-    baris.push(`- NPSN: ${site.identity.npsn}`);
-  }
-  if (
-    site.identity.accreditation &&
-    !site.identity.accreditation.startsWith("TODO")
-  ) {
+  if (terisi(site.identity.npsn)) baris.push(`- NPSN: ${site.identity.npsn}`);
+  if (terisi(site.identity.accreditation)) {
     baris.push(`- Akreditasi: ${site.identity.accreditation}`);
   }
-  if (site.identity.foundedYear > 0) {
+  if (tahunTerisi(site.identity.foundedYear)) {
     baris.push(`- Tahun berdiri: ${site.identity.foundedYear}`);
   }
+  baris.push(`- Lembaga pengusul: ${site.identity.founder}`);
   baris.push("");
 
   baris.push("## Lokasi dan Kontak");
   baris.push("");
-  baris.push(`- Alamat: ${alamatSatuBaris() || "belum dilengkapi"}`);
-  baris.push(
-    `- Koordinat: ${site.geo.latitude}, ${site.geo.longitude}`,
-  );
-  if (site.contact.phone && !site.contact.phone.startsWith("TODO")) {
-    baris.push(`- Telepon: ${site.contact.phone}`);
-  }
-  if (site.contact.email && !site.contact.email.startsWith("TODO")) {
-    baris.push(`- Email: ${site.contact.email}`);
+  baris.push(`- Alamat: ${alamatSatuBaris(site) || "belum dilengkapi"}`);
+  baris.push(`- Koordinat: ${site.geo.latitude}, ${site.geo.longitude}`);
+  if (terisi(site.contact.phone)) baris.push(`- Telepon: ${site.contact.phone}`);
+  if (terisi(site.contact.email)) baris.push(`- Email: ${site.contact.email}`);
+  if (terisi(site.contact.whatsapp)) {
+    baris.push(`- WhatsApp: ${site.contact.whatsapp}`);
   }
   baris.push("");
 
@@ -223,6 +216,16 @@ export function susunLlmsFullTxt(): string {
     baris.push(`- ${bersih(m)}`);
   }
   baris.push("");
+
+  baris.push("## Sambutan Kepala Madrasah");
+  baris.push("");
+  baris.push(`- Nama: ${bersih(profil.sambutan.nama)}`);
+  baris.push(`- Jabatan: ${profil.sambutan.jabatan}`);
+  baris.push("");
+  for (const t of profil.sambutan.teks) {
+    baris.push(bersih(t));
+    baris.push("");
+  }
 
   baris.push("## Struktur Organisasi");
   baris.push("");

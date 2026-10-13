@@ -2,86 +2,57 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { useState } from "react";
 import { MENU_PUBLIK } from "@/config/navigation";
-import { LogoSitus, NamaSitus } from "@/components/site/logo";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 /**
- * Navigasi utama.
+ * Navigasi.
  *
- * Mobile first: di layar sempit berupa panel yang slid dari atas,
- * di layar lebar menjadi baris menu horizontal. Menu memakai tombol
- * biasa, bukan dari pustaka animasi, agar ringan.
+ * Desktop: bar atas biasa.
+ * Ponsel: menu penuh saat tombol ditekan, PLUS bar bawah yang menempel
+ * dengan empat tujuan. Bar bawah sengaja mengikuti kebiasaan tab WhatsApp
+ * karena lebih mudah ditemukan dan tidak perlu dipelajari.
+ *
+ * Menu diambil dari `@/config/navigation` agar sama dengan footer dan
+ *breadcrumb — satu perubahan cukup di satu tempat.
  */
-export function NavigasiSitus({ logoId }: { logoId: string | null }) {
+const MENU = MENU_PUBLIK;
+
+export function NavigasiAtas() {
   const pathname = usePathname();
-  const [buka, setBuka] = useState(false);
-
-  // Kunci pergeseran halaman ketika menu terbuka.
-  useEffect(() => {
-    if (!buka) return;
-    const gayaAwal = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = gayaAwal;
-    };
-  }, [buka]);
-
-  // Escape menutup menu.
-  useEffect(() => {
-    if (!buka) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setBuka(false);
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [buka]);
-
-  const aktifUntuk = (href: string): boolean =>
-    href === "/" ? pathname === "/" : pathname.startsWith(href);
+  const [terbuka, setTerbuka] = useState(false);
 
   return (
-    <>
-      {/* Bilah navigasi */}
-      <div className="flex items-center gap-2">
-        <Link
-          href="/"
-          onClick={() => setBuka(false)}
-          className="flex min-w-0 items-center gap-2.5"
-          aria-label="Beranda"
-        >
-          <LogoSitus mediaId={logoId} ukuran={36} className="sm:hidden" />
-          <NamaSitus tampilkanSlogan className="sm:hidden" />
-          <LogoSitus mediaId={logoId} ukuran={40} className="hidden sm:block" />
-          <NamaSitus tampilkanSlogan className="hidden sm:block" />
+    <header className="sticky top-0 z-40 border-b border-garis bg-putih/95 backdrop-blur">
+      <div className="mx-auto flex h-16 w-full max-w-[1180px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+        <Link href="/" className="flex items-center gap-2.5">
+          <span
+            className="grid h-9 w-9 place-items-center rounded-lg bg-hijau font-judul text-base text-white"
+            aria-hidden="true"
+          >
+            M
+          </span>
+          <span className="font-judul text-[1.0625rem] leading-none font-bold">
+            MTs Ma&apos;arif Tieng
+          </span>
         </Link>
 
-        <nav aria-label="Navigasi utama" className="hidden lg:block">
-          <ul className="flex items-center gap-0.5">
-            {MENU_PUBLIK.map((item) => {
-              const aktif = aktifUntuk(item.href);
+        <nav aria-label="Navigasi utama" className="hidden md:block">
+          <ul className="flex items-center gap-1">
+            {MENU.map((m) => {
+              const aktif = pathname === m.href;
               return (
-                <li key={item.href}>
+                <li key={m.href}>
                   <Link
-                    href={item.href}
+                    href={m.href}
                     aria-current={aktif ? "page" : undefined}
-                    className={cn(
-                      "relative rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                    className={`block rounded-lg px-4 py-2.5 text-[0.9375rem] font-semibold transition-colors ${
                       aktif
-                        ? "text-primary"
-                        : "text-muted-foreground hover:text-foreground",
-                    )}
+                        ? "bg-hijau-muda text-hijau-tua"
+                        : "text-tinta-2 hover:bg-garis hover:text-tinta"
+                    }`}
                   >
-                    {item.label}
-                    {aktif ? (
-                      <span
-                        aria-hidden
-                        className="absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-primary"
-                      />
-                    ) : null}
+                    {m.label}
                   </Link>
                 </li>
               );
@@ -89,73 +60,87 @@ export function NavigasiSitus({ logoId }: { logoId: string | null }) {
           </ul>
         </nav>
 
-        <div className="ml-auto flex items-center gap-1 lg:hidden">
-          <Button
-            asChild
-            size="sm"
-            className="hidden bg-primary hover:bg-primary-hover sm:inline-flex"
+        <button
+          type="button"
+          onClick={() => setTerbuka((v) => !v)}
+          aria-expanded={terbuka}
+          aria-controls="menu-penuh"
+          className="grid h-12 w-12 place-items-center rounded-lg border border-garis text-tinta md:hidden"
+        >
+          <span className="sr-only">{terbuka ? "Tutup menu" : "Buka menu"}</span>
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            aria-hidden="true"
           >
-            <Link href="/kontak">Hubungi Kami</Link>
-          </Button>
+            {terbuka ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
+          </svg>
+        </button>
+      </div>
 
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setBuka((v) => !v)}
-            aria-expanded={buka}
-            aria-controls="menu-seluler"
-            aria-label={buka ? "Tutup menu" : "Buka menu"}
-          >
-            {buka ? <X className="size-5" aria-hidden /> : <Menu className="size-5" aria-hidden />}
-          </Button>
+      {terbuka && (
+        <div id="menu-penuh" className="border-t border-garis bg-putih md:hidden">
+          <nav aria-label="Navigasi lengkap" className="px-4 py-2">
+            <ul>
+              {MENU.map((m) => (
+                <li key={m.href}>
+                  <Link
+                    href={m.href}
+                    onClick={() => setTerbuka(false)}
+                    className="flex min-h-14 items-center gap-3 border-b border-garis text-lg font-semibold"
+                  >
+                    <m.ikon className="h-6 w-6 text-hijau" aria-hidden="true" />
+                    {m.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
-      </div>
+      )}
+    </header>
+  );
+}
 
-      {/* Menu layar lebar: tombol aksi di kanan */}
-      <div className="hidden lg:block">
-        <Button asChild size="sm" className="bg-primary hover:bg-primary-hover">
-          <Link href="/kontak">Hubungi Kami</Link>
-        </Button>
-      </div>
+/**
+ * Bar bawah yang menempel di layar ponsel.
+ *
+ * `aria-label` menjelaskan tujuannya agar pembaca layar tahu ini bukan
+ * navigasi utama yang terduplikasi, melainkan pintasan.
+ */
+export function BarBawah() {
+  const pathname = usePathname();
 
-      {/* Panel menu seluler */}
-      <div
-        id="menu-seluler"
-        hidden={!buka}
-        className="absolute inset-x-0 top-full z-40 border-b bg-background shadow-sm lg:hidden"
-      >
-        <nav aria-label="Navigasi seluler" className="px-4 py-3">
-          <ul className="space-y-0.5">
-            {MENU_PUBLIK.map((item) => {
-              const aktif = aktifUntuk(item.href);
-              return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    onClick={() => setBuka(false)}
-                    aria-current={aktif ? "page" : undefined}
-                    className={cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-3 text-base font-medium transition-colors",
-                      aktif
-                        ? "bg-primary-soft text-primary"
-                        : "text-foreground hover:bg-muted",
-                    )}
-                  >
-                    <item.ikon className="size-4 shrink-0 opacity-70" aria-hidden />
-                    {item.label}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-
-          <Button asChild className="mt-3 w-full bg-primary hover:bg-primary-hover">
-            <Link href="/kontak" onClick={() => setBuka(false)}>
-              Hubungi Kami
-            </Link>
-          </Button>
-        </nav>
-      </div>
-    </>
+  return (
+    <nav
+      aria-label="Pintasan cepat"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-garis bg-putih md:hidden"
+      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+    >
+      <ul className="grid grid-cols-4">
+        {MENU.map((m) => {
+          const aktif = pathname === m.href;
+          return (
+            <li key={m.href}>
+              <Link
+                href={m.href}
+                aria-current={aktif ? "page" : undefined}
+                className={`flex min-h-16 flex-col items-center justify-center gap-1 text-xs font-semibold ${
+                  aktif ? "text-hijau" : "text-tinta-3"
+                }`}
+              >
+                <m.ikon className="h-6 w-6" aria-hidden="true" />
+                {m.label}
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
   );
 }

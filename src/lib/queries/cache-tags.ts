@@ -13,6 +13,8 @@ export const TAG = {
   extracurriculars: "extracurriculars",
   albums: "albums",
   settings: "settings",
+  /** Identitas sekolah, kontak, dan isi halaman profil. */
+  profil: "profil",
   messages: "messages",
 } as const;
 

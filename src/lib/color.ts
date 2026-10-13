@@ -112,6 +112,17 @@ export function warnaTeksDiAtas(hex: string): string {
   return denganPutih >= denganGelap ? "#ffffff" : "#111111";
 }
 
+/**
+ * Kontras terbaik antara teks putih dan teks gelap di atas sebuah warna.
+ *
+ * Berbeda dengan `kontrasDenganPutih`, fungsi ini membolehkan warna terang
+ * dengan teks gelap. Dipakai untuk warna ketiga yang bisa dipakai sebagai
+ * latar blok penuh.
+ */
+export function kontrasTerbaik(hex: string): number {
+  return Math.max(kontrasDenganPutih(hex), kontrasDenganGelap(hex));
+}
+
 /** Warna latar Empuk: versi sangat tipis dari warna merek. */
 export function warnaEmpuk(hex: string): string {
   return campurDenganPutih(hex, 0.92);
@@ -127,10 +138,24 @@ export interface VariabelTema {
   accent: string;
   accentSoft: string;
   onAccent: string;
+  /** Warna ketiga: untuk blok warna penuh dan sorotan tambahan. */
+  alt: string;
+  altSoft: string;
+  onAlt: string;
 }
 
-/** Hitung seluruh turunan dari dua warna yang dipilih admin. */
-export function hitungTema(primary: string, accent: string): VariabelTema {
+/**
+ * Hitung seluruh turunan dari tiga warna yang dipilih admin.
+ *
+ * `alt` boleh dikosongkan oleh pemanggil lama; saat itu dipakai warna
+ * bawaan agar tidak pernah ada blok tanpa warna.
+ */
+export function hitungTema(
+  primary: string,
+  accent: string,
+  alt?: string,
+): VariabelTema {
+  const altHex = alt ? normalisasiHex(alt) : BAWAAN.alt;
   return {
     primary: normalisasiHex(primary),
     primaryHover: gelapkan(normalisasiHex(primary), 0.16),
@@ -139,6 +164,9 @@ export function hitungTema(primary: string, accent: string): VariabelTema {
     accent: normalisasiHex(accent),
     accentSoft: warnaEmpuk(accent),
     onAccent: warnaTeksDiAtas(accent),
+    alt: altHex,
+    altSoft: warnaEmpuk(altHex),
+    onAlt: warnaTeksDiAtas(altHex),
   };
 }
 
@@ -146,6 +174,7 @@ export function hitungTema(primary: string, accent: string): VariabelTema {
 export const BAWAAN = {
   primary: "#047857",
   accent: "#b45309",
+  alt: "#9d174d",
 } as const;
 
 /**
@@ -162,6 +191,19 @@ export const PRESET = [
   { nama: "Hijau tua", primary: "#166534", accent: "#a16207" },
 ] as const;
 
+/**
+ * Pilihan untuk warna ketiga.
+ *
+ * Hue-nya sengaja jauh dari hijau merek dan dari emas aksen, supaya blok
+ * berwarna ketiga benar-benar menambah warna, bukan mengulang yang sudah ada.
+ */
+export const PRESET_KETIGA = [
+  { nama: "Marong", alt: "#9d174d" },
+  { nama: "Biru", alt: "#1e40af" },
+  { nama: "Terakota", alt: "#9a3412" },
+  { nama: "Ungu", alt: "#5b21b6" },
+] as const;
+
 /** Batas kontras minimum untuk warna utama. */
 export const KONTRAS_MINIMUM = 4.5;
 
@@ -176,5 +218,21 @@ export function periksaWarnaUtama(hex: string): string | null {
 
 export function periksaWarnaAksen(hex: string): string | null {
   if (!hexValid(hex)) return "Format warna harus seperti #b45309 (6 digit heksadesimal).";
+  return null;
+}
+
+/**
+ * Warna ketiga.
+ *
+ * boleh terang dengan teks gelap, jadi yang diperiksa adalah kontras
+ * terbaik terhadap putih atau gelap. Kalau tidak lolos, warna itu akan
+ * dipakai sebagai latar blok dan teksnya jadi sulit dibaca.
+ */
+export function periksaWarnaKetiga(hex: string): string | null {
+  if (!hexValid(hex)) return "Format warna harus seperti #9d174d (6 digit heksadesimal).";
+  const kontras = kontrasTerbaik(hex);
+  if (kontras < KONTRAS_MINIMUM) {
+    return `Kontras ${kontras.toFixed(2)}:1 terlalu rendah. Warna ketiga dipakai sebagai latar blok, jadi perlu minimal ${KONTRAS_MINIMUM}:1 terhadap teks terang atau gelap.`;
+  }
   return null;
 }

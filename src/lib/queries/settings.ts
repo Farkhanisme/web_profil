@@ -17,6 +17,8 @@ import { TAG } from "./cache-tags";
 export interface PengaturanSitus {
   themePrimary: string;
   themeAccent: string;
+  /** Warna ketiga untuk blok warna penuh. */
+  themeAlt: string;
   logoMediaId: string | null;
   logo: MediaDTO | null;
   /** true bila nilai masih sama dengan warna bawaan */
@@ -45,6 +47,8 @@ export async function pengaturanSitus(): Promise<PengaturanSitus> {
 
   const primary = normalisasiHex(peta.theme_primary ?? BAWAAN.primary);
   const accent = normalisasiHex(peta.theme_accent ?? BAWAAN.accent);
+  // Instalasi lama belum punya kunci theme_alt; bawaan sudah cukup aman.
+  const alt = normalisasiHex(peta.theme_alt ?? BAWAAN.alt);
   const logoId = peta.logo_media_id?.trim() || null;
 
   let logo: MediaDTO | null = null;
@@ -67,15 +71,23 @@ export async function pengaturanSitus(): Promise<PengaturanSitus> {
   return {
     themePrimary: primary,
     themeAccent: accent,
+    themeAlt: alt,
     logoMediaId: logoId,
     logo,
     memakaiBawaan:
-      primary === BAWAAN.primary && accent === BAWAAN.accent && !logoId,
+      primary === BAWAAN.primary &&
+      accent === BAWAAN.accent &&
+      alt === BAWAAN.alt &&
+      !logoId,
   };
 }
 
 /** Seluruh turunan warna, siap dipakai untuk CSS variable. */
 export async function tema(): Promise<VariabelTema> {
   const pengaturan = await pengaturanSitus();
-  return hitungTema(pengaturan.themePrimary, pengaturan.themeAccent);
+  return hitungTema(
+    pengaturan.themePrimary,
+    pengaturan.themeAccent,
+    pengaturan.themeAlt,
+  );
 }

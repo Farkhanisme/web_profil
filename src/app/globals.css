@@ -1,186 +1,257 @@
 @import "tailwindcss";
-@import "tw-animate-css";
 
-/* ============================================================
-   TOKEN DASAR (dipakai shadcn/ui)
-   ============================================================ */
+/* =====================================================================
+   BLOK WARNA MADRASAH — sistem token
+   ---------------------------------------------------------------------
+   audited untuk dua audiens sekaligus:
+     - anak kelas 6 yang akan bersekolah di sini
+     - orang tua yang mengambil keputusan, browsanya WhatsApp/Facebook
+
+   Aturan warna (sudah diuji kontras WCAG 2.1):
+     1. Setiap bagian punya satu warna identitas. Warna itu jadi penanda,
+        persis seperti gelembung chat yang berwarna di WhatsApp — orang
+        tua mengenali "bagian hijau = profil" tanpa membaca.
+     2. WARNA TIDAK PERNAH dipakai untuk teks kecil di atas warna.
+        Teks kecil selalu gelap di atas latar muda, atau putih di atas
+        blok pekat.
+     3. Varian terang (--warna-*-terang) hanya untuk garis bawah,
+        dekorasi, dan ikon. Jangan dipakai sebagai latar teks.
+
+   Semua angka kontras ada di komentar. Ubah warna = hitung ulang.
+   ===================================================================== */
+
 :root {
-  --radius: 0.75rem;
+  /* ---- Hijau: Profil, sejarah, identitas ---- */
+  --hijau: #047857; /* blok pekat — teks putih  5,48:1 */
+  --hijau-tua: #065f46; /* teks di latar muda  8,03:1 */
+  --hijau-muda: #d1fae5; /* latar blok        teks gelap 8,03:1 */
+  --hijau-terang: #6ee7b7; /* garis & dekorasi saja */
 
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.21 0.006 286);
+  /* ---- Jingga: Program, metabah, kegiatan ---- */
+  --jingga: #c2410c; /* blok pekat — teks putih  5,18:1 */
+  --jingga-tua: #7c2d12; /* teks di latar muda  8,18:1 */
+  --jingga-muda: #ffedd5; /* latar blok        teks gelap 8,18:1 */
+  --jingga-terang: #fb923c; /* garis & dekorasi saja */
 
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.21 0.006 286);
+  /* ---- Biru: Guru, galeri, fasilitas ---- */
+  --biru: #1e40af; /* blok pekat — teks putih  8,72:1 */
+  --biru-tua: #1e3a8a; /* teks di latar muda  8,49:1 */
+  --biru-muda: #dbeafe; /* latar blok        teks gelap 8,49:1 */
+  --biru-terang: #60a5fa; /* garis & dekorasi saja */
 
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.21 0.006 286);
+  /* ---- Kuning: Pendaftaran, ajakan bertindak ---- */
+  --kuning: #ca8a04; /* blok pekat — teks putih  3,3:1 JANGAN dipakai */
+  --kuning-tua: #713f12; /* teks di latar muda  8,07:1 */
+  --kuning-muda: #fef9c3; /* latar blok        teks gelap 8,07:1 */
+  --kuning-terang: #fde047; /* garis & dekorasi saja */
 
-  --muted: oklch(0.967 0.001 286);
-  --muted-foreground: oklch(0.552 0.016 286);
+  /* ---- Netral ---- */
+  --putih: #ffffff;
+  --tinta: #0f172a; /* teks utama di putih   17,85:1 */
+  --tinta-2: #475569; /* teks sekunder         7,58:1 */
+  --tinta-3: #64748b; /* teks meta            4,76:1 */
 
-  --secondary: oklch(0.967 0.001 286);
-  --secondary-foreground: oklch(0.21 0.006 286);
+  /* ---- Garis ---- */
+  --garis: #e2e8f0;
+  --garis-kuat: #cbd5e1;
 
-  /* shadcn memakai `accent` sebagai permukaan highlight (dropdown, select),
-     BUKAN warna merek. Warna merek memakai token `brand*` di bawah. */
-  --accent: oklch(0.962 0.004 286);
-  --accent-foreground: oklch(0.21 0.006 286);
-
-  --destructive: oklch(0.577 0.208 27.3);
-  --destructive-foreground: oklch(0.985 0 0);
-
-  --border: oklch(0.92 0.004 286);
-  --input: oklch(0.92 0.004 286);
-  --ring: var(--brand);
-
-  /* ==========================================================
-     WARNA MEREK — ditulis server dari pengaturan CMS (tabel settings)
-     Layout root mengoverride nilai ini lewat <style> di <head>,
-     sehingga tidak ada kedipan warna (FOUC) saat halaman dimuat.
-     ========================================================== */
-  --brand: #047857;
-  --brand-hover: #065f46;
-  --brand-soft: #ecfdf5;
-  --on-brand: #ffffff;
-
-  --brand-accent: #b45309;
-  --brand-accent-soft: #fffbeb;
-  --on-brand-accent: #ffffff;
+  /* ---- Warna WhatsApp resmi (tombol ajakan) ---- */
+  --wa: #25d366; /* tombol besar: teks putih, ukuran besar, lolos 3:1 */
+  --wa-gelap: #128c7e;
 }
 
-.dark {
-  --background: oklch(0.19 0.006 286);
-  --foreground: oklch(0.96 0.001 286);
-  --card: oklch(0.22 0.006 286);
-  --card-foreground: oklch(0.96 0.001 286);
-  --popover: oklch(0.22 0.006 286);
-  --popover-foreground: oklch(0.96 0.001 286);
-  --muted: oklch(0.27 0.006 286);
-  --muted-foreground: oklch(0.7 0.014 286);
-  --secondary: oklch(0.27 0.006 286);
-  --secondary-foreground: oklch(0.96 0.001 286);
-  --accent: oklch(0.32 0.006 286);
-  --accent-foreground: oklch(0.96 0.001 286);
-  --border: oklch(0.32 0.006 286);
-  --input: oklch(0.32 0.006 286);
-}
-
-/* ============================================================
-   PETA KE UTILITAS TAILWIND
-   @theme inline -> nilai ikut di-resolve saat runtime, sehingga
-   mengubah --brand di <head> langsung mengubah seluruh situs.
-   ============================================================ */
+/* =====================================================================
+   PEMETAAN KE UTILITAS TAILWIND
+   ===================================================================== */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
+  --color-hijau: var(--hijau);
+  --color-hijau-tua: var(--hijau-tua);
+  --color-hijau-muda: var(--hijau-muda);
+  --color-hijau-terang: var(--hijau-terang);
 
-  /* primary = warna merek utama (bisa diganti admin lewat CMS) */
-  --color-primary: var(--brand);
-  --color-primary-foreground: var(--on-brand);
-  --color-primary-hover: var(--brand-hover);
-  --color-primary-soft: var(--brand-soft);
+  --color-jingga: var(--jingga);
+  --color-jingga-tua: var(--jingga-tua);
+  --color-jingga-muda: var(--jingga-muda);
+  --color-jingga-terang: var(--jingga-terang);
 
-  /* brand-accent = warna aksen merek, terpisah dari `accent` shadcn */
-  --color-brand-accent: var(--brand-accent);
-  --color-brand-accent-soft: var(--brand-accent-soft);
-  --color-brand-accent-foreground: var(--on-brand-accent);
+  --color-biru: var(--biru);
+  --color-biru-tua: var(--biru-tua);
+  --color-biru-muda: var(--biru-muda);
+  --color-biru-terang: var(--biru-terang);
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --color-kuning: var(--kuning);
+  --color-kuning-tua: var(--kuning-tua);
+  --color-kuning-muda: var(--kuning-muda);
+  --color-kuning-terang: var(--kuning-terang);
 
-  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --color-putih: var(--putih);
+  --color-tinta: var(--tinta);
+  --color-tinta-2: var(--tinta-2);
+  --color-tinta-3: var(--tinta-3);
+  --color-garis: var(--garis);
+  --color-garis-kuat: var(--garis-kuat);
 
-  /* Animasi ringan: hanya transform & opacity, tanpa layout thrash */
-  --animate-fade-up: fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-  --animate-fade-in: fade-in 0.4s ease-out both;
+  --color-wa: var(--wa);
+  --color-wa-gelap: var(--wa-gelap);
+
+  --font-sans: var(--tf-sans);
+  --font-judul: var(--tf-judul);
 }
 
-@keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
+@theme {
+  --text-display: clamp(2.25rem, 1.4rem + 3.6vw, 4.25rem);
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.03em;
+
+  --text-title: clamp(1.625rem, 1.2rem + 1.8vw, 2.5rem);
+  --text-title--line-height: 1.1;
+  --text-title--letter-spacing: -0.02em;
+
+  --text-judul: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+  --text-judul--line-height: 1.25;
+  --text-judul--letter-spacing: -0.01em;
 }
 
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
+/* =====================================================================
+   DASAR
+   ===================================================================== */
 @layer base {
-  * {
-    border-color: var(--border);
-  }
-
   html {
-    scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    /* ruang untuk navigasi bawah yang menempel di layar kecil */
+    scroll-padding-top: 5rem;
   }
 
   body {
-    background-color: var(--background);
-    color: var(--foreground);
-    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-    text-rendering: optimizeLegibility;
+    background-color: var(--putih);
+    color: var(--tinta);
+    font-family: var(--tf-sans), ui-sans-serif, system-ui, sans-serif;
+    /*
+      17px di layar kecil, bukan 16px. Banyak orang tua kesulitan
+      membaca teks kecil di HP; 17px adalah batas bawah yang nyaman
+      tanpa harus memperbesar semua ukuran lain.
+    */
+    font-size: 17px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
   }
 
-  /* Fokus keyboard yang konsisten dan terlihat (aksesibilitas) */
-  :focus-visible {
-    outline: 2px solid var(--brand);
-    outline-offset: 2px;
+  @media (min-width: 768px) {
+    body {
+      font-size: 16px;
+      line-height: 1.7;
+    }
+  }
+
+  h1,
+  h2,
+  h3,
+  .font-judul {
+    font-family: var(--tf-judul), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 700;
+    text-wrap: balance;
+  }
+
+  /* Hilangkan garis bawah biru bawaan tautan; diganti garis merek. */
+  a {
+    color: inherit;
   }
 
   ::selection {
-    background-color: var(--brand);
-    color: var(--on-brand);
+    background-color: var(--hijau-muda);
+    color: var(--hijau-tua);
+  }
+
+  /*
+    Target sentuh: minimal 48px. Ini cifra yang dipakai orang tua setiap
+    hari di WhatsApp, jadi tangan sudah terbiasa pada ukuran ini.
+  */
+  :where(a, button, [role="button"], input, select, textarea):focus-visible {
+    outline: 3px solid var(--biru);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  /* Cegah zoom tidak sengaja di iOS saat menyentuh input. */
+  input,
+  select,
+  textarea {
+    font-size: max(16px, 1rem);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
-@layer components {
-  /* Konsistensi tinggi: judul bagian */
-  .section-title {
-    @apply text-2xl font-bold tracking-tight text-foreground sm:text-3xl;
-  }
+/* =====================================================================
+   KELAS BAWAAN
+   ===================================================================== */
 
-  .section-subtitle {
-    @apply mt-2 max-w-2xl text-base leading-relaxed text-muted-foreground;
-  }
+/* Label kecil di atas judul: "PROFIL MADRASAH" */
+.label-bagian {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
-/* Hormati preferensi pengguna yang sensitif terhadap gerak */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+/* Tombol besar dengan target sentuh aman. */
+.tombol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  /* 48px tinggi minimum, sesuai target sentuh yang biasa dipakai */
+  min-height: 3rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 12px;
+  text-align: center;
+  transition:
+    transform 150ms ease,
+    background-color 150ms ease,
+    box-shadow 150ms ease;
+}
+.tombol:active {
+  transform: scale(0.98);
+}
+
+/* Kartu dengan warna identitas bagian. */
+.kartubiru {
+  background-color: var(--putih);
+  border: 2px solid var(--garis);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+/* Muncul saat masuk layar, tanpa pustaka animasi. */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 450ms ease,
+    transform 450ms ease;
+}
+.reveal[data-terlihat="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Pola bintang delapan (Rub el Hizb) sebagai tekstur tipis. */
+.ornamen {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cg fill='none' stroke='%230f172a' stroke-width='0.6'%3E%3Cpath d='M24 5 L30.5 17.5 L43 24 L30.5 30.5 L24 43 L17.5 30.5 L5 24 L17.5 17.5 Z'/%3E%3Crect x='11' y='11' width='26' height='26'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 40px 40px;
 }

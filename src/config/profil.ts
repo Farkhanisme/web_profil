@@ -1,29 +1,20 @@
+import type { IsiProfil } from "@/lib/konten";
+
 /**
- * Konten profil sekolah — ditulis di kode, bukan CMS (sesuai PRD).
+ * Isi profil sekolah — NILAI BAWAAN, bukan sumber kebenaran.
  *
- * PENTING: seluruh teks di file ini masih DRAF generik.
- * Ganti dengan data resmi sekolah sebelum rilis (T20).
- * Cari semua nilai yang diawali "DRAF:" untuk menemukan yang perlu diganti.
+ * Seluruh isi di bawah dapat diubah pengelola lewat CMS (`/admin/profil`).
+ * Nilai ini hanya dipakai sebagai cadangan ketika kolom di database kosong,
+ * sehingga pengelola baru yang belum pernah menyimpan apa pun tetap melihat
+ * tampilan yang sama seperti sebelum fitur CMS dipasang.
+ *
+ * PENTING: masih banyak "DRAF:" di bawah. Ganti dengan data resmi sekolah
+ * lewat CMS (atau di sini bila ingin controlling lewat kode) sebelum rilis.
  */
 
-export interface FaqItem {
-  question: string;
-  answer: string;
-}
-
-export interface OrgMember {
-  name: string;
-  position: string;
-}
-
-export interface FasilitasItem {
-  name: string;
-  description: string;
-}
-
-export const profil = {
+export const profil: IsiProfil = {
   ringkasan:
-    "MTs Ma'arif Tieng adalah madrasah tsanawiyah swasta di Secangkang, Kabupaten Sik, Kalimantan Timur. Sekolah ini menyediakan pendidikan Islam terpadu bagi siswa kelas VII sampai IX.",
+    "MTs Ma'arif Tieng adalah madrasah tsanawiyah swasta di Desa Tieng, Kecamatan Kejajar, Kabupaten Wonosobo. Sekolah ini menyediakan pendidikan Islam terpadu bagi siswa kelas VII sampai IX.",
 
   sejarah: [
     "DRAF: Tuliskan kapan MTs Ma'arif Tieng berdiri, siapa pendirinya, dan kebutuhan apa yang melatarbelakangi berdirinya sekolah ini.",
@@ -56,7 +47,7 @@ export const profil = {
     { name: "DRAF: Nama kepala bagian", position: "Kepala Bagian Pembelajaran" },
     { name: "DRAF: Nama kepala bagian", position: "Kepala Bagian Kesiswaan" },
     { name: "DRAF: Nama kepala bagian", position: "Kepala Bagian Sarana dan Prasarana" },
-  ] satisfies OrgMember[],
+  ],
 
   fasilitas: [
     { name: "Ruang kelas", description: "DRAF: keterangan singkat" },
@@ -65,13 +56,13 @@ export const profil = {
     { name: "Musholla", description: "DRAF: keterangan singkat" },
     { name: "Toilet siswa", description: "DRAF: keterangan singkat" },
     { name: "Kantin", description: "DRAF: keterangan singkat" },
-  ] satisfies FasilitasItem[],
+  ],
 
   faq: [
     {
       question: "Di mana lokasi MTs Ma'arif Tieng?",
       answer:
-        "MTs Ma'arif Tieng berada di Secangkang, Kabupaten Sik, Kalimantan Timur. Alamat lengkap dan tautan peta tersedia pada halaman Kontak.",
+        "MTs Ma'arif Tieng berada di Desa Tieng, Kecamatan Kejajar, Kabupaten Wonosobo. Alamat lengkap dan tautan peta tersedia pada halaman Kontak.",
     },
     {
       question: "Apakah MTs Ma'arif Tieng sekolah negeri atau swasta?",
@@ -98,10 +89,10 @@ export const profil = {
       answer:
         "Pendaftaran siswa baru dibuka setiap tahun melalui pengumuman resmi sekolah. Informasi terbaru dapat diperoleh melalui halaman Kontak.",
     },
-  ] satisfies FaqItem[],
+  ],
 
   updatedAt: "2026-10-12",
-} as const;
+};
 
 /** True bila masih ada draf yang harus diganti sekolah sebelum rilis. */
 export function profilAdaPlaceholder(): boolean {
