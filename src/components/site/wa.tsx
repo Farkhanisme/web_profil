@@ -1,51 +1,10 @@
+import { teleponHref, waLinkUrl, teleponTerisi } from "@/lib/konten";
 import type { IsiSitus } from "@/lib/konten";
 
 /**
- * Jalur WhatsApp sekolah. Satu helper supaya nomor tidak ditulis ulang
- * di banyak tempat dan mudah diganti lewat data sekolah.
+ * Ikon WhatsApp digambar sendiri, bukan font ikon.
  */
-export function tautanWa(nomor: string, pesan?: string): string {
-  const angka = nomor.replace(/\D/g, "");
-  const teks = pesan
-    ? `?text=${encodeURIComponent(pesan)}`
-    : "";
-  return `https://wa.me/${angka}${teks}`;
-}
-
-/**
- * Tombol WhatsApp mengambang.
- *
- * Ini bukan peniruan WhatsApp: hijau #25D366 adalah warna yang membuat
- * orang tua mengenali "ini tombol chat" sekilas, persis seperti gelembung
- * hijau di aplikasi mereka. Halaman madrasah di Indonesia hampir selalu
- * punya tombol seperti ini, dan kalau tidak ada orang tua akan mencari.
- *
- * Ditampilkan di semua halaman, karena orang tua sering membuka satu
- * halaman dari tautan WhatsApp tanpa lewat beranda.
- */
-export function TombolWa({
-  nomor,
-  pesan,
-}: {
-  nomor: string;
-  pesan?: string;
-}) {
-  return (
-    <a
-      href={tautanWa(nomor, pesan)}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="tombol fixed right-4 bottom-20 z-30 bg-wa text-white shadow-lg shadow-black/20 hover:bg-wa-gelap sm:right-6 sm:bottom-24"
-      aria-label={`Hubungi ${nomor} lewat WhatsApp`}
-    >
-      <WhatsappIkon />
-      <span>Chat WhatsApp</span>
-    </a>
-  );
-}
-
-/** Ikon WhatsApp digambar sendiri, bukan font ikon. */
-export function WhatsappIkon({ ukuran = 20 }: { ukuran?: number }) {
+export function IkonWa({ ukuran = 20 }: { ukuran?: number }) {
   return (
     <svg
       width={ukuran}
@@ -60,27 +19,80 @@ export function WhatsappIkon({ ukuran = 20 }: { ukuran?: number }) {
 }
 
 /**
- * Baris kontak di dalam blok kuning pendaftaran: telepon dan WhatsApp
- * berdampingan, target sentuh besar, tidak berupa tautan tipis.
+ * Tombol WhatsApp mengambang.
+ *
+ * Hijau #25D366 bukan peniruan: itu warna yang membuat orang tua
+ * mengenali "ini tombol chat" sekilas, seperti gelembung hijau di
+ * aplikasi mereka. Halaman madrasah di Indonesia hampir selalu punya
+ * tombol seperti ini, dan kalau tidak ada orang tua akan mencari-cari.
+ *
+ * Botak sampai nomor WhatsApp diisi pengelola. `waLinkUrl` mengembalikan
+ * null bila nomornya masih placeholder, jadi tidak ada tautan mati.
+ */
+export function TombolWa({ situs }: { situs: IsiSitus }) {
+  const href = waLinkUrl(
+    situs,
+    "Halo, saya ingin menanyakan pendaftaran MTs Ma'arif Tieng.",
+  );
+
+  // Nomor belum diisi: jangan tampilkan tombol yang tidak bisa dipakai.
+  if (!href) return null;
+
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="tombol fixed right-4 bottom-20 z-30 bg-wa text-white shadow-lg shadow-black/20 hover:bg-wa-gelap sm:right-6 sm:bottom-24"
+    >
+      <IkonWa />
+      <span>Chat WhatsApp</span>
+    </a>
+  );
+}
+
+/**
+ * Kontak di dalam blok pendaftaran.
+ *
+ * Hanya menampilkan tombol yang memang punya data: nomor telepon dan
+ * WhatsApp masing-masing diperiksa terpisah, supaya tidak ada tombol
+ * yang menuju ke "TODO" kalau pengelola belum mengisi.
  */
 export function KontakBlok({ situs }: { situs: IsiSitus }) {
+  const wa = waLinkUrl(situs, "Halo, saya ingin bertanya pendaftaran.");
+  const adaWa = Boolean(wa);
+  const adaTelp = teleponTerisi(situs.contact);
+
+  if (!adaWa && !adaTelp) {
+    return (
+      <p className="rounded-xl bg-kuning-terang p-4 text-kuning-tua">
+        Nomor kontak belum diisi. Pengelola dapat menambahkannya lewat
+        pengaturan situs.
+      </p>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-3 sm:flex-row">
-      <a
-        href={`https://wa.me/${situs.contact.whatsapp.replace(/\D/g, "")}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="tombol bg-wa text-white hover:bg-wa-gelap"
-      >
-        <WhatsappIkon />
-        Chat WhatsApp
-      </a>
-      <a
-        href={`tel:${situs.contact.phone.replace(/[^0-9+]/g, "")}`}
-        className="tombol border-2 border-kuning-tua bg-kuning-muda text-kuning-tua hover:bg-kuning-terang"
-      >
-        Telepon {situs.contact.phone}
-      </a>
-    </div>
+      {adaWa && wa && (
+        <a
+          href={wa}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="tombol bg-wa text-white hover:bg-wa-gelap"
+        >
+          <IkonWa />
+          Chat WhatsApp
+        </a>
+      )}
+      {adaTelp && (
+        <a
+          href={teleponHref(situs)}
+          className="tombol border-2 border-kuning-tua bg-kuning-muda text-kuning-tua hover:bg-kuning-terang"
+        >
+          Telepon {situs.contact.phone}
+        </a>
+      )}
+      </div>
   );
 }

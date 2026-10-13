@@ -107,7 +107,8 @@ export interface IsiProfil {
  * Nilai seperti ini tidak pernah ditampilkan ke pengunjung.
  */
 export function masihPlaceholder(nilai: string): boolean {
-  return !nilai || nilai.startsWith("TODO");
+  const n = nilai.trim();
+  return !n || n.startsWith("TODO") || n.startsWith("DRAF");
 }
 
 /**
