@@ -108,9 +108,15 @@ export interface RateLimitRow {
 
 export interface MediaDTO {
   id: string;
+  tg_file_id: string;
+  tg_file_unique_id: string | null;
+  tg_message_id: number | null;
+  mime: string;
   width: number;
   height: number;
+  bytes: number;
   alt: string;
+  created_at: number;
 }
 
 export interface Staff {
@@ -179,7 +185,18 @@ export interface ContactMessage {
 
 export function mediaToDTO(row: MediaRow | null | undefined): MediaDTO | null {
   if (!row) return null;
-  return { id: row.id, width: row.width, height: row.height, alt: row.alt };
+  return {
+    id: row.id,
+    tg_file_id: row.tg_file_id ?? "",
+    tg_file_unique_id: row.tg_file_unique_id,
+    tg_message_id: row.tg_message_id,
+    mime: row.mime,
+    width: row.width,
+    height: row.height,
+    bytes: row.bytes,
+    alt: row.alt,
+    created_at: row.created_at,
+  };
 }
 
 export function staffToDTO(
@@ -247,12 +264,7 @@ export function photoToDTO(row: PhotoRow, media: MediaRow): Photo {
     id: row.id,
     albumId: row.album_id,
     caption: row.caption,
-    media: {
-      id: media.id,
-      width: media.width,
-      height: media.height,
-      alt: media.alt,
-    },
+    media: mediaToDTO(media)!,
   };
 }
 
