@@ -6,6 +6,7 @@ import {
   programTerbit,
 } from "@/lib/queries/konten";
 import { terisi, tahunTerisi, wilayahSingkat } from "@/lib/konten";
+import { JsonLd, jsonLdSekolah, jsonLdSitus } from "@/lib/json-ld";
 import { Kontainer } from "@/components/site/dasar";
 import { KartuGuru, KartuProgram, BlokDaftar } from "@/components/site/blok";
 import { Kerangka } from "@/components/site/kerangka";
@@ -23,6 +24,7 @@ export default async function Beranda() {
 
   return (
     <Kerangka situs={situs}>
+      <JsonLd data={[jsonLdSekolah(situs), jsonLdSitus(situs)]} />
       {/* ============ HERO: blok hijau, aksi langsung ============ */}
       <section className="bg-hijau text-white">
         <Kontainer>

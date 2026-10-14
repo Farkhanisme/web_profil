@@ -2,12 +2,22 @@ import type { Metadata } from "next";
 import { bacaProfil, bacaSitus } from "@/lib/queries/profil";
 import { terisi, tahunTerisi } from "@/lib/konten";
 import { metadataDasar } from "@/lib/seo";
+import {
+  JsonLd,
+  jsonLdFaq,
+  jsonLdKepalaMadrasah,
+  jsonLdSekolah,
+} from "@/lib/json-ld";
 import { Kontainer } from "@/components/site/dasar";
 import { DaftarIsi, JudulBagian } from "@/components/site/blok";
 import { Kerangka } from "@/components/site/kerangka";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return metadataDasar("Profil Madrasah", undefined, "/profil");
+  return metadataDasar(
+    "Profil Madrasah",
+    "Sejarah, visi, misi, struktur, fasilitas, dan pertanyaan umum MTs Ma'arif Tieng.",
+    "/profil",
+  );
 }
 
 export default async function HalamanProfil() {
@@ -62,6 +72,18 @@ export default async function HalamanProfil() {
 
   return (
     <Kerangka situs={situs}>
+      {/*
+        Data terstruktur profil. Ketiganya dikirim sebagai array karena
+        tiap skema dibaca terpisah; nilai `null` (mis. FAQ kosong)
+        diabaikan JSON.stringify.
+      */}
+      <JsonLd
+        data={[
+          jsonLdSekolah(situs),
+          jsonLdKepalaMadrasah(profil.sambutan),
+          jsonLdFaq(faqBersih),
+        ]}
+      />
       {/* ============ JUDUL: blok hijau muda ============ */}
       <section className="bg-hijau-muda">
         <Kontainer>

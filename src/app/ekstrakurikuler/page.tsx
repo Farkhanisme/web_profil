@@ -2,12 +2,17 @@ import type { Metadata } from "next";
 import { ekstrakurikulerTerbit } from "@/lib/queries/konten";
 import { bacaSitus } from "@/lib/queries/profil";
 import { metadataDasar } from "@/lib/seo";
+import { JsonLd, jsonLdRemahRoti } from "@/lib/json-ld";
 import { Kontainer } from "@/components/site/dasar";
 import { KartuProgram, JudulBagian } from "@/components/site/blok";
 import { Kerangka } from "@/components/site/kerangka";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return metadataDasar("Ekstrakurikuler", undefined, "/ekstrakurikuler");
+  return metadataDasar(
+    "Ekstrakurikuler",
+    "Kegiatan di luar kelas di MTs Ma'arif Tieng, lengkap dengan jadwal, pembina, dan deskripsi singkat.",
+    "/ekstrakurikuler",
+  );
 }
 
 export default async function HalamanEkstrakurikuler() {
@@ -18,6 +23,12 @@ export default async function HalamanEkstrakurikuler() {
 
   return (
     <Kerangka situs={situs}>
+      <JsonLd
+        data={jsonLdRemahRoti([
+          { label: "Beranda", href: "/" },
+          { label: "Ekstrakurikuler" },
+        ])}
+      />
       {/* ============ JUDUL: blok jingga ============ */}
       <section className="bg-jingga text-white">
         <Kontainer>

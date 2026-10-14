@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { alamatSatuBaris, terisi, tahunTerisi } from "@/lib/konten";
+import { HALAMAN_PUBLIK } from "@/config/navigation";
 import type { IsiSitus } from "@/lib/konten";
 import type { Staff } from "@/lib/db/types";
 import { tahunSekarang } from "@/lib/tahun";
@@ -163,16 +164,13 @@ export async function Footer({ situs }: { situs: IsiSitus }) {
           <div>
             <p className="label-bagian text-putih/50">Halaman</p>
             <ul className="mt-2 space-y-1 text-sm">
-              <li>
-                <Link href="/profil" className="text-putih/80 hover:text-putih">
-                  Profil Madrasah
-                </Link>
-              </li>
-              <li>
-                <Link href="/guru" className="text-putih/80 hover:text-putih">
-                  Guru dan Staf
-                </Link>
-              </li>
+              {HALAMAN_PUBLIK.map((h) => (
+                <li key={h.href}>
+                  <Link href={h.href} className="text-putih/80 hover:text-putih">
+                    {h.label}
+                  </Link>
+                </li>
+              ))}
               <li>
                 <Link href="/#daftar" className="text-putih/80 hover:text-putih">
                   Pendaftaran

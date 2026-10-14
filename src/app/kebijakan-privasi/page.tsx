@@ -8,7 +8,11 @@ import { Kerangka } from "@/components/site/kerangka";
 import Link from "next/link";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return metadataDasar("Kebijakan Privasi", undefined, "/kebijakan-privasi");
+  return metadataDasar(
+    "Kebijakan Privasi",
+    "Penjelasan singkat data yang dikumpulkan formulir kontak MTs Ma'arif Tieng dan cara pengelolaannya.",
+    "/kebijakan-privasi",
+  );
 }
 
 export default async function HalamanKebijakanPrivasi() {

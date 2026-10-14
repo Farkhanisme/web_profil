@@ -85,6 +85,7 @@
   --primary-foreground: var(--putih);
   --primary-soft: var(--hijau-muda);
   --primary-deep: var(--hijau-tua);
+  --primary-hover: var(--hijau-tua); /* keadaan :hover tombol utama */
 
   --background: var(--putih);
   --foreground: var(--tinta);
@@ -148,6 +149,7 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-primary-soft: var(--primary-soft);
   --color-primary-deep: var(--primary-deep);
+  --color-primary-hover: var(--primary-hover);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);

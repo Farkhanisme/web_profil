@@ -2,12 +2,17 @@ import type { Metadata } from "next";
 import { bacaSitus } from "@/lib/queries/profil";
 import { terisi, waLinkUrl, petaEmbedUrl, petaLinkUrl, alamatSatuBaris, teleponHref } from "@/lib/konten";
 import { metadataDasar } from "@/lib/seo";
+import { JsonLd, jsonLdSekolah } from "@/lib/json-ld";
 import { Kontainer } from "@/components/site/dasar";
 import { Kerangka } from "@/components/site/kerangka";
 import { FormKontak } from "@/components/site/form-kontak";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return metadataDasar("Kontak", undefined, "/kontak");
+  return metadataDasar(
+    "Kontak",
+    "Alamat, jam layanan, peta lokasi, dan formulir pesan untuk MTs Ma'arif Tieng.",
+    "/kontak",
+  );
 }
 
 export default async function HalamanKontak() {
@@ -16,6 +21,7 @@ export default async function HalamanKontak() {
 
   return (
     <Kerangka situs={situs}>
+      <JsonLd data={jsonLdSekolah(situs)} />
       <section className="bg-jingga text-white">
         <Kontainer>
           <div className="py-12 sm:py-16">

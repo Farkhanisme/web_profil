@@ -184,6 +184,58 @@ export const profilSchema = z.object({
 
 export type ProfilInput = z.infer<typeof profilSchema>;
 
+/* ------------------------------------------------------------------ */
+/* Skema per modul                                                    */
+/* ------------------------------------------------------------------ */
+/*
+ * Modul CMS dipisah per halaman (Identitas, Teks Profil, Struktur,
+ * Fasilitas, Pertanyaan Umum), tapi validasinya tetap satu sumber: tiap
+ * modul mengambil subset field dari `profilSchema` dengan `.pick()`.
+ * Aturan panjang karakter karena itu tidak pernah berbeda antar halaman.
+ */
+
+/** Nama, slogan, NPSN, alamat, peta, dan kontak. */
+export const identitasSchema = profilSchema.pick({
+  name: true,
+  short_name: true,
+  legal_name: true,
+  tagline: true,
+  description: true,
+  identity_status: true,
+  npsn: true,
+  accreditation: true,
+  founded_year: true,
+  curriculum: true,
+  founder: true,
+  street: true,
+  village: true,
+  subdistrict: true,
+  city: true,
+  province: true,
+  postal_code: true,
+  geo_lat: true,
+  geo_lng: true,
+  phone: true,
+  email: true,
+  whatsapp: true,
+  students: true,
+});
+
+/** Ringkasan, sejarah, visi, misi, dan sambutan kepala madrasah. */
+export const profilTeksSchema = profilSchema.pick({
+  ringkasan: true,
+  sejarah: true,
+  visi: true,
+  misi: true,
+  sambutan_nama: true,
+  jabatan: true,
+  sambutan_teks: true,
+});
+
+export const strukturSchema = profilSchema.pick({ struktur_json: true });
+export const fasilitasSchema = profilSchema.pick({ fasilitas_json: true });
+export const faqSchema = profilSchema.pick({ faq_json: true });
+
 /** Pesan galat dikelompokkan per field, sesuai bentuk `state.fieldErrors`. */
 export function galatPerField(galat: z.ZodError): Record<string, string[]> {
   const hasil: Record<string, string[]> = {};

@@ -4,9 +4,11 @@ import { programBySlug, programTerbit } from "@/lib/queries/konten";
 import { bacaSitus } from "@/lib/queries/profil";
 import { terisi } from "@/lib/konten";
 import { metadataDasar } from "@/lib/seo";
+import { JsonLd, jsonLdRemahRoti } from "@/lib/json-ld";
 import { Kontainer } from "@/components/site/dasar";
 import { KartuProgram, JudulBagian } from "@/components/site/blok";
 import { Kerangka } from "@/components/site/kerangka";
+import { RemahRoti } from "@/components/site/remah-roti";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -60,12 +62,26 @@ export default async function HalamanProgramDetail({ params }: { params: Promise
 
   return (
     <Kerangka situs={situs}>
+      <JsonLd
+        data={jsonLdRemahRoti([
+          { label: "Beranda", href: "/" },
+          { label: "Program Pendidikan", href: "/program" },
+          { label: program.name },
+        ])}
+      />
       {/* ============ JUDUL: blok jingga ============ */}
       <section className="bg-jingga text-white">
         <Kontainer>
           <div className="py-12 sm:py-16">
+            <RemahRoti
+              items={[
+                { label: "Beranda", href: "/" },
+                { label: "Program", href: "/program" },
+                { label: program.name },
+              ]}
+            />
             <div
-              className="h-1.5 w-14 rounded-full bg-jingga-terang"
+              className="mt-6 h-1.5 w-14 rounded-full bg-jingga-terang"
               aria-hidden="true"
             />
             <p className="label-bagian mt-4 text-jingga-terang">Program</p>

@@ -2,12 +2,17 @@ import type { Metadata } from "next";
 import { staffTerbit } from "@/lib/queries/staff";
 import { bacaSitus } from "@/lib/queries/profil";
 import { metadataDasar } from "@/lib/seo";
+import { JsonLd, jsonLdSekolah } from "@/lib/json-ld";
 import { Kontainer } from "@/components/site/dasar";
 import { KartuGuru, JudulBagian } from "@/components/site/blok";
 import { Kerangka } from "@/components/site/kerangka";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return metadataDasar("Guru dan Staf", undefined, "/guru");
+  return metadataDasar(
+    "Guru dan Staf",
+    "Nama, jabatan, dan mata pelajaran yang diampu guru serta staf MTs Ma'arif Tieng.",
+    "/guru",
+  );
 }
 
 /** Jabatan yang masuk kelompok pimpinan, bukan guru pengajar. */
@@ -32,6 +37,7 @@ export default async function HalamanGuru() {
 
   return (
     <Kerangka situs={situs}>
+      <JsonLd data={jsonLdSekolah(situs)} />
       {/* ============ JUDUL: blok biru ============ */}
       <section className="bg-biru text-white">
         <Kontainer>

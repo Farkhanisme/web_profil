@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { albumBySlug, photoSemua, albumTerbit } from "@/lib/queries/konten";
+import { albumSemua, albumBySlug, fotoAlbum } from "@/lib/queries/albums";
 import { bacaSitus } from "@/lib/queries/profil";
 import { metadataDasar } from "@/lib/seo";
+import { JsonLd, jsonLdRemahRoti } from "@/lib/json-ld";
 import { Kontainer } from "@/components/site/dasar";
 import { KartuProgram, JudulBagian } from "@/components/site/blok";
 import { Kerangka } from "@/components/site/kerangka";
+import { RemahRoti } from "@/components/site/remah-roti";
 import { ContactSheet } from "@/components/site/contact-sheet";
 import { LightboxPortal } from "@/components/site/lightbox-portal";
 
@@ -17,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 export async function generateStaticParams() {
-  const albums = await albumTerbit();
+  const albums = await albumSemua();
   return albums.map((a) => ({ slug: a.slug }));
 }
 
@@ -26,7 +28,7 @@ function AlbumLain({ albumId }: { albumId: string }) {
 }
 
 async function AlbumLainAsync({ albumId }: { albumId: string }) {
-  const albums = await albumTerbit();
+  const albums = await albumSemua();
   const lain = albums.filter((a) => a.id !== albumId).slice(0, 3);
 
   if (lain.length === 0) return null;
@@ -59,10 +61,9 @@ export default async function HalamanAlbumDetail({ params }: { params: Promise<{
 
   if (!album) notFound();
 
-  // Ambil foto dengan albumId yang benar, filter yang media-nya null
-  const fotos = (await photoSemua(album.id)).filter(
-    (f): f is typeof f & { media: NonNullable<typeof f.media> } => f.media != null
-  );
+  // Foto diambil lewat kueri album; medianya selalu ada karena kueri
+  // memakai JOIN, jadi tidak perlu penyaringan tambahan di sini.
+  const fotos = await fotoAlbum(album.id);
 
   // Data untuk Lightbox
   const lightboxPhotos = fotos.map((f) => ({
@@ -75,12 +76,26 @@ export default async function HalamanAlbumDetail({ params }: { params: Promise<{
 
   return (
     <Kerangka situs={situs}>
+      <JsonLd
+        data={jsonLdRemahRoti([
+          { label: "Beranda", href: "/" },
+          { label: "Galeri Foto", href: "/galeri" },
+          { label: album.title },
+        ])}
+      />
       {/* ============ JUDUL: blok biru ============ */}
       <section className="bg-biru text-white">
         <Kontainer>
           <div className="py-12 sm:py-16">
+            <RemahRoti
+              items={[
+                { label: "Beranda", href: "/" },
+                { label: "Galeri", href: "/galeri" },
+                { label: album.title },
+              ]}
+            />
             <div
-              className="h-1.5 w-14 rounded-full bg-biru-terang"
+              className="mt-6 h-1.5 w-14 rounded-full bg-biru-terang"
               aria-hidden="true"
             />
             <p className="label-bagian mt-4 text-biru-terang">Galeri Foto</p>

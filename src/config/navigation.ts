@@ -16,6 +16,25 @@ export const MENU_PUBLIK = [
   { href: "/#daftar", label: "Daftar", ikon: UserPlus },
 ] as const;
 
+/**
+ * Semua halaman publik, untuk footer dan halaman 404.
+ *
+ * Menu utama (`MENU_PUBLIK`) sengaja hanya empat tujuan supaya tidak
+ * berdesakan di ponsel. Semua halaman tetap harus bisa dijangkau, jadi
+ * footer memakai daftar lengkap ini. Tanpa daftar ini, halaman program,
+ * ekstrakurikuler, galeri, dan kontak menjadi halaman yatim: tidak ada
+ * satu pun tautan masuk dari halaman lain.
+ */
+export const HALAMAN_PUBLIK = [
+  { href: "/profil", label: "Profil Madrasah" },
+  { href: "/guru", label: "Guru dan Staf" },
+  { href: "/program", label: "Program Sekolah" },
+  { href: "/ekstrakurikuler", label: "Ekstrakurikuler" },
+  { href: "/galeri", label: "Galeri Foto" },
+  { href: "/kontak", label: "Kontak dan Pendaftaran" },
+  { href: "/kebijakan-privasi", label: "Kebijakan Privasi" },
+] as const;
+
 /** Label breadcrumb untuk segmen URL yang tidak bisa ditebak. */
 export const LABEL_JALUR: Record<string, string> = {
   profil: "Profil",

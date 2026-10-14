@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { bacaSitus } from "@/lib/queries/profil";
 import { waLinkUrl } from "@/lib/konten";
+import { HALAMAN_PUBLIK } from "@/config/navigation";
 import { Kontainer } from "@/components/site/dasar";
 import { Kerangka } from "@/components/site/kerangka";
 
@@ -25,16 +26,7 @@ export const metadata: Metadata = {
  * Karena itu halaman ini menawarkan jalan keluar lengkap, bukan sekadar
  * "kembali ke beranda" yang memaksa belajar lagi.
  */
-const HALAMAN = [
-  { href: "/", label: "Beranda" },
-  { href: "/profil", label: "Profil Madrasah" },
-  { href: "/guru", label: "Guru dan Staf" },
-  { href: "/program", label: "Program Sekolah" },
-  { href: "/ekstrakurikuler", label: "Ekstrakurikuler" },
-  { href: "/galeri", label: "Galeri Foto" },
-  { href: "/kontak", label: "Kontak dan Pendaftaran" },
-  { href: "/kebijakan-privasi", label: "Kebijakan Privasi" },
-];
+const HALAMAN = [{ href: "/", label: "Beranda" }, ...HALAMAN_PUBLIK];
 
 export default async function HalamanTidakDitemukan() {
   const situs = await bacaSitus();

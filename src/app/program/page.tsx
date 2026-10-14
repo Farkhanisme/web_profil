@@ -2,12 +2,17 @@ import type { Metadata } from "next";
 import { programTerbit } from "@/lib/queries/konten";
 import { bacaSitus } from "@/lib/queries/profil";
 import { metadataDasar } from "@/lib/seo";
+import { JsonLd, jsonLdRemahRoti } from "@/lib/json-ld";
 import { Kontainer } from "@/components/site/dasar";
 import { KartuProgram, JudulBagian } from "@/components/site/blok";
 import { Kerangka } from "@/components/site/kerangka";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return metadataDasar("Program Pendidikan", undefined, "/program");
+  return metadataDasar(
+    "Program Pendidikan",
+    "Program pembelajaran harian MTs Ma'arif Tieng: mata pelajaran umum, pendidikan agama, dan kegiatan wali kelas.",
+    "/program",
+  );
 }
 
 export default async function HalamanProgram() {
@@ -15,6 +20,12 @@ export default async function HalamanProgram() {
 
   return (
     <Kerangka situs={situs}>
+      <JsonLd
+        data={jsonLdRemahRoti([
+          { label: "Beranda", href: "/" },
+          { label: "Program Pendidikan" },
+        ])}
+      />
       {/* ============ JUDUL: blok jingga ============ */}
       <section className="bg-jingga text-white">
         <Kontainer>

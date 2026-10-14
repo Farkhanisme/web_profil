@@ -1,20 +1,31 @@
 import type { Metadata } from "next";
-import { albumTerbit } from "@/lib/queries/konten";
+import { albumSemua } from "@/lib/queries/albums";
 import { bacaSitus } from "@/lib/queries/profil";
 import { metadataDasar } from "@/lib/seo";
+import { JsonLd, jsonLdRemahRoti } from "@/lib/json-ld";
 import { Kontainer } from "@/components/site/dasar";
 import { KartuProgram, JudulBagian } from "@/components/site/blok";
 import { Kerangka } from "@/components/site/kerangka";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return metadataDasar("Galeri Foto", undefined, "/galeri");
+  return metadataDasar(
+    "Galeri Foto",
+    "Kumpulan foto kegiatan belajar, ibadah, olahraga, dan acara madrasah.",
+    "/galeri",
+  );
 }
 
 export default async function HalamanGaleri() {
-  const [albums, situs] = await Promise.all([albumTerbit(), bacaSitus()]);
+  const [albums, situs] = await Promise.all([albumSemua(), bacaSitus()]);
 
   return (
     <Kerangka situs={situs}>
+      <JsonLd
+        data={jsonLdRemahRoti([
+          { label: "Beranda", href: "/" },
+          { label: "Galeri Foto" },
+        ])}
+      />
       {/* ============ JUDUL: blok biru ============ */}
       <section className="bg-biru text-white">
         <Kontainer>
