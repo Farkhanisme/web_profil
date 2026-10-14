@@ -2,7 +2,15 @@
 
 import { useActionState, useState } from "react";
 import { AlertCircle, Check, RotateCcw } from "lucide-react";
-import { BAWAAN, PRESET, hitungTema, kontrasDenganPutih, KONTRAS_MINIMUM, normalisasiHex } from "@/lib/color";
+import {
+  BAWAAN,
+  PRESET,
+  PRESET_KETIGA,
+  hitungTema,
+  kontrasDenganPutih,
+  KONTRAS_MINIMUM,
+  normalisasiHex,
+} from "@/lib/color";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -124,16 +132,22 @@ function Pratinjau({ primary, accent }: { primary: string; accent: string }) {
   );
 }
 
-export function FormTema({ awal }: { awal: { primary: string; accent: string } }) {
+export function FormTema({
+  awal,
+}: {
+  awal: { primary: string; accent: string; alt: string };
+}) {
   const [state, formAction] = useActionState<PengaturanState, FormData>(
     simpanTema,
     undefined,
   );
   const [primary, setPrimary] = useState(awal.primary);
   const [accent, setAccent] = useState(awal.accent);
+  const [alt, setAlt] = useState(awal.alt);
 
   const galatPrimary = state?.fieldErrors?.theme_primary?.[0];
   const galatAccent = state?.fieldErrors?.theme_accent?.[0];
+  const galatAlt = state?.fieldErrors?.theme_alt?.[0];
   const kontras = kontrasDenganPutih(primary);
 
   return (
@@ -161,10 +175,18 @@ export function FormTema({ awal }: { awal: { primary: string; accent: string } }
             onUbah={setAccent}
             galat={galatAccent}
           />
+          <BarberPemilih
+            id="theme_alt"
+            label="Warna ketiga"
+            nilai={alt}
+            onUbah={setAlt}
+            galat={galatAlt}
+          />
         </div>
 
         <input type="hidden" name="theme_primary" value={primary} />
         <input type="hidden" name="theme_accent" value={accent} />
+        <input type="hidden" name="theme_alt" value={alt} />
 
         <div className="mt-4 flex items-center gap-2 text-xs">
           {kontras >= KONTRAS_MINIMUM ? (
@@ -191,6 +213,33 @@ export function FormTema({ awal }: { awal: { primary: string; accent: string } }
       <Panel className="p-4 sm:p-5">
         <p className="mb-3 text-sm font-medium">Pratinjau</p>
         <Pratinjau primary={primary} accent={accent} />
+      </Panel>
+
+      {/* Pilihan cepat untuk warna ketiga */}
+      <Panel className="p-4 sm:p-5">
+        <p className="mb-1 text-sm font-medium">Pilihan warna ketiga</p>
+        <p className="mb-3 text-xs text-muted-foreground">
+          Warna ini dipakai sebagai blok warna tambahan. Semua pilihan sudah
+          lolos uji kontras terhadap teks terang dan gelap.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {PRESET_KETIGA.map((p) => (
+            <Button
+              key={p.nama}
+              type="button"
+              variant={normalisasiHex(p.alt) === normalisasiHex(alt) ? "default" : "outline"}
+              size="sm"
+              onClick={() => setAlt(p.alt)}
+              className="gap-2"
+            >
+              <span
+                className="size-3.5 rounded-full border"
+                style={{ background: p.alt }}
+              />
+              {p.nama}
+            </Button>
+          ))}
+        </div>
       </Panel>
 
       {/* Preset */}
@@ -236,6 +285,7 @@ export function FormTema({ awal }: { awal: { primary: string; accent: string } }
           onClick={() => {
             setPrimary(BAWAAN.primary);
             setAccent(BAWAAN.accent);
+            setAlt(BAWAAN.alt);
           }}
         >
           <RotateCcw className="size-4" aria-hidden />

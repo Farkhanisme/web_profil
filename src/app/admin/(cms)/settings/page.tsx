@@ -53,7 +53,11 @@ export default async function HalamanPengaturan({
           pendaftaran. Mode gelap belum tersedia.
         </p>
         <FormTema
-          awal={{ primary: pengaturan.themePrimary, accent: pengaturan.themeAccent }}
+          awal={{
+            primary: pengaturan.themePrimary,
+            accent: pengaturan.themeAccent,
+            alt: pengaturan.themeAlt,
+          }}
         />
 
         <div className="mt-4 flex flex-wrap items-center gap-3">

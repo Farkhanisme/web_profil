@@ -37,9 +37,12 @@ export async function simpanTema(
 ): Promise<PengaturanState> {
   await assertAdmin();
 
+  // Ketiga warna wajib dikirim. `theme_alt` pernah tidak ikut dikirim
+  // padahalRequired oleh skema, sehingga penyimpanan selalu gagal.
   const hasil = temaSchema.safeParse({
     theme_primary: formData.get("theme_primary"),
     theme_accent: formData.get("theme_accent"),
+    theme_alt: formData.get("theme_alt"),
   });
 
   if (!hasil.success) {
@@ -51,6 +54,7 @@ export async function simpanTema(
 
   await tulis("theme_primary", normalisasiHex(hasil.data.theme_primary));
   await tulis("theme_accent", normalisasiHex(hasil.data.theme_accent));
+  await tulis("theme_alt", normalisasiHex(hasil.data.theme_alt));
   await catatPerubahan();
 
   updateTag(TAG.settings);
@@ -100,6 +104,7 @@ export async function kembalikanWarnaBawaan(): Promise<void> {
 
   await tulis("theme_primary", BAWAAN.primary);
   await tulis("theme_accent", BAWAAN.accent);
+  await tulis("theme_alt", BAWAAN.alt);
   await catatPerubahan();
 
   updateTag(TAG.settings);

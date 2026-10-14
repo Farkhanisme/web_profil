@@ -68,23 +68,49 @@ melewati migrasi yang sudah pernah diterapkan.
 
 ## Skrip
 
-| Perintah                 | Fungsi                                              |
-| ------------------------ | --------------------------------------------------- |
-| `npm run dev`            | Server pengembangan                                  |
-| `npm run build`          | Build produksi                                      |
-| `npm run lint`           | ESLint                                              |
-| `npm run typecheck`      | TypeScript tanpa emit                               |
-| `npm run migrate`        | Menjalankan migrasi SQL yang belum dipakai           |
-| `npm run seed:admin`     | Membuat atau memperbarui akun admin                 |
-| `npm run backup:media`   | Mengunduh seluruh media ke folder lokal              |
-| `npm run seed:demo`     | Mengisi data contoh agar situs bisa dinilai           |
-| `npm run cek:konten`    | Daftar placeholder yang masih tersisa                |
-| `npm run build:rilis`   | Cek konten ketat lalu build, gagal bila ada placeholder|
-| `npm run qa`            | Mengukur halaman publik, menulis `docs/laporan-qa.md`  |
+Pemeriksaan yang tidak butuh server:
 
-> PENTING: skrip `uji:*`, `qa`, `analisis-ux`, dan `backup:media` masih
-> terdaftar di `package.json` tetapi berkasnya belum ada di branch ini
-> (terhapus saat FE dibangun ulang). Jalankan hanya perintah di atas.
+| Perintah | Fungsi |
+| -------- | ------ |
+| `npm run typecheck` | TypeScript tanpa emit |
+| `npm run lint` | ESLint |
+| `npm run cek:konten` | Daftar placeholder yang masih tersisa |
+| `npm run cek:kontras` | Menghitung kontras WCAG dari token warna yang benar-benar dipakai |
+| `npm test` | typecheck + lint + cek:kontras |
+
+Pemeriksaan yang butuh server berjalan di port 3000 (`npm run dev`):
+
+| Perintah | Fungsi |
+| -------- | ------ |
+| `npm run cek:halaman` | Kerangka tiap halaman: satu `h1`, tautan lompat ke konten, tanpa placeholder bocor, description unik, JSON-LD, tombol WhatsApp sesuai nomor, 404, galeri |
+| `npm run cek:tautan` | Tidak ada tautan mati dan tidak ada halaman yatim |
+| `npm run uji:auth` | Login, penolakan kredensial salah, batas percobaan per IP |
+| `npm run uji:staff` | CRUD guru/staf, urutan, validasi, proteksi |
+| `npm run uji:konten` | CRUD program dan ekstrakurikuler, keunikan slug |
+| `npm run uji:album` | CRUD album dan foto, Cascade, unggah, proteksi |
+| `npm run uji:pengaturan` | Perhitungan warna, skema, halaman pengaturan, pesan masuk |
+| `npm run uji:media` | Proxy `/media/[id]` termasuk kasus gagal |
+| `npm run uji:kompresi` | Kompresi gambar di peramban |
+| `npm run uji:rate-limit` | Penghitung jendela laju |
+| `npm run test:http` | Menjalankan seluruh rangkaian di atas |
+
+Skrip operasional:
+
+| Perintah | Fungsi |
+| -------- | ------ |
+| `npm run migrate` | Menjalankan migrasi SQL yang belum dipakai |
+| `npm run seed:admin` | Membuat atau memperbarui akun admin |
+| `npm run seed:demo` | Mengisi data contoh agar situs bisa dinilai |
+| `npm run seed:galeri-uji` | Album besar untuk menguji galeri |
+| `npm run build:rilis` | Gerbang rilis: `cek:konten --strict` + kontras + typecheck + lint + build |
+
+### Pengaman data uji
+
+Skrip uji CRUD butuh menulis dan menghapus baris. Agar data sekolah yang
+sudah diisi lewat CMS tidak ikut terhapus, setiap skrip uji membungkus
+seluruh isinya dengan `denganPagar` (`scripts/pagar.ts`): isi tabel
+dicetak ke memori sebelum skrip berjalan dan dikembalikan apa adanya
+sesudahnya, termasuk ketika skrip gagal di tengah jalan.
 
 ## Tampilan Publik — Blok Warna Madrasah
 

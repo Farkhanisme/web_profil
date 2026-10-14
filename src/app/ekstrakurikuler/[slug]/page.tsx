@@ -131,13 +131,13 @@ export default async function HalamanEkstrakurikulerDetail({ params }: { params:
                 <dl className="mt-4 grid gap-2 sm:grid-cols-2">
                   {terisi(ekstra.schedule) && (
                     <>
-                      <dt className="text-tinta-3">Jadwal</dt>
+                      <dt className="text-tinta-2">Jadwal</dt>
                       <dd className="font-semibold">{ekstra.schedule}</dd>
                     </>
                   )}
                   {terisi(ekstra.coach) && (
                     <>
-                      <dt className="text-tinta-3">Pembina</dt>
+                      <dt className="text-tinta-2">Pembina</dt>
                       <dd className="font-semibold">{ekstra.coach}</dd>
                     </>
                   )}
