@@ -30,14 +30,13 @@ export default async function Beranda() {
         <Kontainer>
           <div className="grid gap-10 py-12 sm:py-16 lg:grid-cols-[1.25fr_1fr] lg:items-center lg:gap-16 lg:py-20">
             <div>
-              <p className="label-bagian text-hijau-terang">
-                PPDB 2026/2027 &middot; Kelas VII
+              <p className="label-bagian text-white">
+                Penerimaan Peserta Didik Baru &middot; Kelas VII
               </p>
               <h1 className="mt-4 text-display">Madrasah untuk anak Anda</h1>
-              <p className="mt-5 max-w-xl text-lg leading-relaxed text-white/90">
-                Pendidikan Islam terpadu di Desa Tieng, Kecamatan Kejajar.
-                Anak belajar agama dan ilmu pengetahuan bersama guru yang
-                sabar.
+              <p className="mt-5 max-w-xl text-lg leading-relaxed text-white/95">
+                Pendidikan Islam terpadu di {wilayah}. Anak belajar agama dan
+                ilmu pengetahuan bersama guru yang sabar.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <a
@@ -164,7 +163,7 @@ export default async function Beranda() {
                 className="h-1.5 w-14 rounded-full bg-jingga-terang"
                 aria-hidden="true"
               />
-              <p className="label-bagian mt-4 text-jingga-terang">
+              <p className="label-bagian mt-4 text-white">
                 Ekstrakurikuler
               </p>
               <h2 className="mt-3 max-w-2xl text-title text-white">

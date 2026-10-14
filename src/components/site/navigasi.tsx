@@ -18,22 +18,39 @@ import { MENU_PUBLIK } from "@/config/navigation";
  */
 const MENU = MENU_PUBLIK;
 
-export function NavigasiAtas() {
+export function NavigasiAtas({
+  nama,
+  logo,
+}: {
+  nama: string;
+  logo: { id: string; alt: string } | null;
+}) {
   const pathname = usePathname();
   const [terbuka, setTerbuka] = useState(false);
 
   return (
     <header className="sticky top-0 z-40 border-b border-garis bg-putih/95 backdrop-blur">
       <div className="mx-auto flex h-16 w-full max-w-[1180px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-2.5">
-          <span
-            className="grid h-9 w-9 place-items-center rounded-lg bg-hijau font-judul text-base text-white"
-            aria-hidden="true"
-          >
-            M
-          </span>
-          <span className="font-judul text-[1.0625rem] leading-none font-bold">
-            MTs Ma&apos;arif Tieng
+        <Link href="/" className="flex min-w-0 items-center gap-2.5">
+          {logo ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={`/media/${logo.id}?w=120`}
+              alt=""
+              width={36}
+              height={36}
+              className="h-9 w-9 shrink-0 rounded-lg object-contain"
+            />
+          ) : (
+            <span
+              className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-hijau font-judul text-base text-white"
+              aria-hidden="true"
+            >
+              {nama.charAt(0).toUpperCase()}
+            </span>
+          )}
+          <span className="truncate font-judul text-[1.0625rem] leading-none font-bold">
+            {nama}
           </span>
         </Link>
 

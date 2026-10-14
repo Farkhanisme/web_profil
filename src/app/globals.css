@@ -56,8 +56,16 @@
   --garis-kuat: #cbd5e1;
 
   /* ---- Warna WhatsApp resmi (tombol ajakan) ---- */
-  --wa: #25d366; /* tombol besar: teks putih, ukuran besar, lolos 3:1 */
-  --wa-gelap: #128c7e;
+  /*
+   * Hijau asli WhatsApp `#25d366` hanya 1,98:1 terhadap teks putih, jadi
+   * tidak boleh jadi latar tombol yang memuat teks. Warna itu tetap
+   * disimpan sebagai `--wa-terang` untuk garis dan dekorasi yang
+   * mengenali merek, sementara tombol memakai hijau tua yang kontrasnya
+   * lolos AA.
+   */
+  --wa: #0e7a63; /* tombol: teks putih 5,27:1 */
+  --wa-gelap: #0b6b52; /* keadaan :hover, teks putih 6,48:1 */
+  --wa-terang: #25d366; /* hijau WhatsApp: garis & dekorasi saja */
 
   /* =====================================================================
      TOKEN SEMANTIK UNTUK CMS (/admin)
@@ -143,6 +151,7 @@
 
   --color-wa: var(--wa);
   --color-wa-gelap: var(--wa-gelap);
+  --color-wa-terang: var(--wa-terang);
 
   /* Token semantik CMS — lihat penjelasan panjang di blok :root. */
   --color-primary: var(--primary);
@@ -301,31 +310,4 @@
 }
 .tombol:active {
   transform: scale(0.98);
-}
-
-/* Kartu dengan warna identitas bagian. */
-.kartubiru {
-  background-color: var(--putih);
-  border: 2px solid var(--garis);
-  border-radius: 20px;
-  overflow: hidden;
-}
-
-/* Muncul saat masuk layar, tanpa pustaka animasi. */
-.reveal {
-  opacity: 0;
-  transform: translateY(16px);
-  transition:
-    opacity 450ms ease,
-    transform 450ms ease;
-}
-.reveal[data-terlihat="true"] {
-  opacity: 1;
-  transform: none;
-}
-
-/* Pola bintang delapan (Rub el Hizb) sebagai tekstur tipis. */
-.ornamen {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cg fill='none' stroke='%230f172a' stroke-width='0.6'%3E%3Cpath d='M24 5 L30.5 17.5 L43 24 L30.5 30.5 L24 43 L17.5 30.5 L5 24 L17.5 17.5 Z'/%3E%3Crect x='11' y='11' width='26' height='26'/%3E%3C/g%3E%3C/svg%3E");
-  background-size: 40px 40px;
 }

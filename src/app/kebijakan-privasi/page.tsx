@@ -24,9 +24,9 @@ export default async function HalamanKebijakanPrivasi() {
         <Kontainer>
           <div className="py-12 sm:py-16">
             <div className="h-1.5 w-14 rounded-full bg-biru-terang" aria-hidden />
-            <p className="label-bagian mt-4 text-biru-terang">Kebijakan Privasi</p>
+            <p className="label-bagian mt-4 text-white">Kebijakan Privasi</p>
             <h1 className="mt-3 max-w-3xl text-display">Kebijakan Privasi</h1>
-            <p className="mt-5 max-w-2xl text-lg leading-relaxed text-white/90">
+            <p className="mt-5 max-w-2xl text-lg leading-relaxed text-white/95">
               Penjelasan singkat mengenai data yang dikumpulkan formulir kontak
               dan cara pengelolaannya.
             </p>

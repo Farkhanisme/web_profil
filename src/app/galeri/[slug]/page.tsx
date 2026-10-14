@@ -9,7 +9,6 @@ import { KartuProgram, JudulBagian } from "@/components/site/blok";
 import { Kerangka } from "@/components/site/kerangka";
 import { RemahRoti } from "@/components/site/remah-roti";
 import { ContactSheet } from "@/components/site/contact-sheet";
-import { LightboxPortal } from "@/components/site/lightbox-portal";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -65,10 +64,13 @@ export default async function HalamanAlbumDetail({ params }: { params: Promise<{
   // memakai JOIN, jadi tidak perlu penyaringan tambahan di sini.
   const fotos = await fotoAlbum(album.id);
 
-  // Data untuk Lightbox
-  const lightboxPhotos = fotos.map((f) => ({
+  // Data untuk contact sheet dan lightbox. `srcMini` dipakai untuk kisi
+  // (bukan `src` yang 1600px), sehingga ponsel tidak mengunduh gambar
+  // besar hanya untuk melihat thumbnail.
+  const fotoGaleri = fotos.map((f) => ({
     id: f.id,
     src: `/media/${f.media.id}?w=1600`,
+    srcMini: `/media/${f.media.id}?w=800`,
     caption: f.caption,
     width: f.media.width,
     height: f.media.height,
@@ -98,10 +100,10 @@ export default async function HalamanAlbumDetail({ params }: { params: Promise<{
               className="mt-6 h-1.5 w-14 rounded-full bg-biru-terang"
               aria-hidden="true"
             />
-            <p className="label-bagian mt-4 text-biru-terang">Galeri Foto</p>
+            <p className="label-bagian mt-4 text-white">Galeri Foto</p>
             <h1 className="mt-3 max-w-3xl text-display">{album.title}</h1>
             {album.description && (
-              <p className="mt-5 max-w-2xl text-lg leading-relaxed text-white/90">
+              <p className="mt-5 max-w-2xl text-lg leading-relaxed text-white/95">
                 {album.description}
               </p>
             )}
@@ -128,16 +130,13 @@ export default async function HalamanAlbumDetail({ params }: { params: Promise<{
             ) : (
               <ContactSheet
                 albumTitle={album.title}
-                photos={lightboxPhotos}
+                photos={fotoGaleri}
               />
             )}
             <AlbumLain albumId={album.id} />
           </div>
         </Kontainer>
       </section>
-
-      {/* ============ LIGHTBOX PORTAL ============ */}
-      <LightboxPortal photos={lightboxPhotos} />
     </Kerangka>
   );
 }

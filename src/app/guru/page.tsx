@@ -46,11 +46,11 @@ export default async function HalamanGuru() {
               className="h-1.5 w-14 rounded-full bg-biru-terang"
               aria-hidden="true"
             />
-            <p className="label-bagian mt-4 text-biru-terang">Guru dan Staf</p>
+            <p className="label-bagian mt-4 text-white">Guru dan Staf</p>
             <h1 className="mt-3 max-w-3xl text-display">
               Guru yang mendampingi anak
             </h1>
-            <p className="mt-5 max-w-2xl text-lg leading-relaxed text-white/90">
+            <p className="mt-5 max-w-2xl text-lg leading-relaxed text-white/95">
               Seluruh pengajar memiliki ijazah minimal S1 dan sertifikat
               kompetensi guru. Daftar diperbarui oleh pengelola sekolah.
             </p>

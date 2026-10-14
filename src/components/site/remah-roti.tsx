@@ -31,7 +31,7 @@ export function RemahRoti({
               {item.href && !terakhir ? (
                 <Link
                   href={item.href}
-                  className="rounded px-1 text-white/80 underline-offset-4 hover:text-white hover:underline"
+                  className="rounded px-1 text-white/90 underline-offset-4 hover:text-white hover:underline"
                 >
                   {item.label}
                 </Link>

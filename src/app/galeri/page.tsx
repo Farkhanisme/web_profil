@@ -34,11 +34,11 @@ export default async function HalamanGaleri() {
               className="h-1.5 w-14 rounded-full bg-biru-terang"
               aria-hidden="true"
             />
-            <p className="label-bagian mt-4 text-biru-terang">Galeri Foto</p>
+            <p className="label-bagian mt-4 text-white">Galeri Foto</p>
             <h1 className="mt-3 max-w-3xl text-display">
               Kegiatan Madrasah
             </h1>
-            <p className="mt-5 max-w-2xl text-lg leading-relaxed text-white/90">
+            <p className="mt-5 max-w-2xl text-lg leading-relaxed text-white/95">
               Kenangan kegiatan belajar, ibadah, olahraga, dan acara
               madrasah yang tercatat kamera.
             </p>

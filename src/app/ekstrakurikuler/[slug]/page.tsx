@@ -87,12 +87,12 @@ export default async function HalamanEkstrakurikulerDetail({ params }: { params:
               className="mt-6 h-1.5 w-14 rounded-full bg-jingga-terang"
               aria-hidden="true"
             />
-            <p className="label-bagian mt-4 text-jingga-terang">
+            <p className="label-bagian mt-4 text-white">
               Ekstrakurikuler
             </p>
             <h1 className="mt-3 max-w-3xl text-display">{ekstra.name}</h1>
             {terisi(ekstra.summary) && (
-              <p className="mt-5 max-w-2xl text-lg leading-relaxed text-white/90">
+              <p className="mt-5 max-w-2xl text-lg leading-relaxed text-white/95">
                 {ekstra.summary}
               </p>
             )}
@@ -117,7 +117,7 @@ export default async function HalamanEkstrakurikulerDetail({ params }: { params:
             )}
 
             <article className="max-w-3xl space-y-6 text-lg leading-relaxed text-tinta-2">
-              <div className="prose prose-slate max-w-none">
+              <div>
                 {ekstra.description.split("\n\n").map((paragraf, i) => (
                   <p key={i}>{paragraf}</p>
                 ))}

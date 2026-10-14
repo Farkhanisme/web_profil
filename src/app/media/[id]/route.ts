@@ -56,10 +56,6 @@ export async function GET(
       messageId: media.tg_message_id,
     });
 
-    const lebar =
-      lebarDiminta ??
-      (media.width > LEBAR_PENUH ? LEBAR_PENUH : (media.width || LEBAR_PENUH));
-
     // Tanpa w: kirim berkas apa adanya supaya browser pun tidak
     // melakukan dekode ulang yang tidak perlu.
     if (lebarDiminta === null) {
@@ -83,9 +79,10 @@ export async function GET(
       });
     }
 
+    // Dengan w: hasilkan thumbnail selebar yang diminta.
     if (lebarDiminta !== null) {
       const thumbnail = await sharp(buffer)
-        .resize({ width: lebar, withoutEnlargement: true })
+        .resize({ width: lebarDiminta, withoutEnlargement: true })
         .webp({ quality: 82 })
         .toBuffer();
       return new Response(new Uint8Array(thumbnail), {

@@ -29,11 +29,11 @@ export default async function HalamanKontak() {
               className="h-1.5 w-14 rounded-full bg-kuning-terang"
               aria-hidden="true"
             />
-            <p className="label-bagian mt-4 text-kuning-terang">Kontak</p>
+            <p className="label-bagian mt-4 text-white">Kontak</p>
             <h1 className="mt-3 max-w-3xl text-display">
               Hubungi madrasah
             </h1>
-            <p className="mt-5 max-w-2xl text-lg leading-relaxed text-white/90">
+            <p className="mt-5 max-w-2xl text-lg leading-relaxed text-white/95">
               Tanyakan pendaftaran, jadwal, atau kunjungan kelas. Kami balas secepatnya.
             </p>
           </div>

@@ -1,4 +1,4 @@
-import { Home, School, Users, UserPlus } from "lucide-react";
+import { Home, MessageCircle, School, Users } from "lucide-react";
 
 /**
  * Menu situs publik.
@@ -7,13 +7,19 @@ import { Home, School, Users, UserPlus } from "lucide-react";
  * panjang justru memperlambat orang tua yang terbiasa dengan
  * empat tab di WhatsApp.
  *
+ * Item keempat adalah "Kontak", bukan tautan ke blok pendaftaran di
+ * beranda (`/#daftar`). Menuju halaman lain sambil bergantung pada hash
+ * tidak selalu menggulir ke bagian yang dituju, sehingga orang tua
+ * berakhir di puncak beranda. Halaman kontak sudah memuat blok
+ * pendaftaran, jam layanan, peta, WhatsApp, dan formulir pesan.
+ *
  * Ikon memakai lucide-react agar konsisten dengan stroke yang sama.
  */
 export const MENU_PUBLIK = [
   { href: "/", label: "Beranda", ikon: Home },
   { href: "/profil", label: "Profil", ikon: School },
   { href: "/guru", label: "Guru dan Staf", ikon: Users },
-  { href: "/#daftar", label: "Daftar", ikon: UserPlus },
+  { href: "/kontak", label: "Kontak", ikon: MessageCircle },
 ] as const;
 
 /**

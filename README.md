@@ -82,9 +82,25 @@ melewati migrasi yang sudah pernah diterapkan.
 | `npm run build:rilis`   | Cek konten ketat lalu build, gagal bila ada placeholder|
 | `npm run qa`            | Mengukur halaman publik, menulis `docs/laporan-qa.md`  |
 
-## Prototype FE — Blok Warna Madrasah
+> PENTING: skrip `uji:*`, `qa`, `analisis-ux`, dan `backup:media` masih
+> terdaftar di `package.json` tetapi berkasnya belum ada di branch ini
+> (terhapus saat FE dibangun ulang). Jalankan hanya perintah di atas.
 
-Tiga halaman untuk dinilai: `/`, `/profil`, `/guru`.
+## Tampilan Publik — Blok Warna Madrasah
+
+Sembilan halaman publik sudah selesai, ditambah CMS untuk pengelola:
+
+| Halaman | Isi |
+| ------- | --- |
+| `/` | Hero, profil singkat, program, ekstrakurikuler, guru, sambutan, blok pendaftaran |
+| `/profil` | Identitas, sejarah, visi, misi, sambutan, struktur, fasilitas, FAQ |
+| `/guru` | Pimpinan, kepala bagian, guru pengajar |
+| `/program`, `/program/[slug]` | Daftar program dan halaman detail |
+| `/ekstrakurikuler`, `/ekstrakurikuler/[slug]` | Daftar kegiatan dan halaman detail |
+| `/galeri`, `/galeri/[slug]` | Daftar album dan contact sheet dengan lightbox |
+| `/kontak` | Alamat, jam layanan, peta, WhatsApp, formulir pesan |
+| `/kebijakan-privasi` | Kebijakan privasi |
+| `/admin` | CMS: identitas, profil, guru, program, ekstrakurikuler, galeri, pesan, pengaturan |
 
 ```bash
 npm run dev    # lalu buka http://localhost:3000
@@ -100,17 +116,25 @@ mengambil keputusan serta browsanya WhatsApp dan Facebook.
 | Guru, galeri | biru `#1e40af` | `#dbeafe` | `#1e3a8a` |
 | Pendaftaran | kuning `#ca8a04` | `#fef9c3` | `#713f12` |
 
-Tiga aturan warna (angka kontras ada di komentar `globals.css`):
+Aturan warna (angka kontras ada di komentar `globals.css`):
 
 1. Setiap bagian punya satu warna identitas, jadi orang tua mengenali
    bagian tanpa membaca, seperti gelembung berwarna di WhatsApp.
-2. Warna tidak pernah dipakai untuk teks kecil di atas warna. Teks kecil
-   selalu gelap di atas latar muda, atau putih di atas blok pekat.
-3. Varian terang hanya untuk garis bawah, dekorasi, dan ikon.
+2. Di atas blok pekat, teks kecil selalu **putih penuh**, bukan varian
+   terang: `jingga-terang` di atas jingga hanya 2,29:1, jauh di bawah
+   ambang WCAG AA 4,5:1. Varian terang hanya untuk garis bawah,
+   dekorasi, dan ikon.
+3. Tombol WhatsApp memakai hijau tua `#0e7a63` (putih 5,27:1). Hijau asli
+   WhatsApp `#25d366` hanya 1,98:1 terhadap teks putih, jadi disimpan
+   sebagai `--wa-terang` untuk dekorasi saja.
 
 Kuning pekat `#ca8a04` hanya 3,3:1 terhadap teks putih, jadi tidak boleh
 menjadi latar teks. Blok pendaftaran karena itu memakai kuning muda dengan
 teks coklat tua.
+
+CMS memakai satu set token semantik terpisah (`primary`, `muted`, `card`,
+`destructive`, dan friends) yang dipetakan ke palet yang sama, supaya
+panel pengelola tidak terlihat seperti produk yang berbeda.
 
 Empat aturan struktural untuk audiens ini:
 
@@ -122,18 +146,22 @@ Empat aturan struktural untuk audiens ini:
 
 Font: **Outfit** untuk judul, **Plus Jakarta Sans** untuk teks.
 
-Isi halaman masih contoh dan berada di `src/lib/contoh.ts`. Ganti dengan
-`bacaProfil()` dan `bacaSitus()` begitu data sekolah asli tersedia.
+Isi halaman dibaca dari database lewat `bacaProfil()` dan `bacaSitus()`.
+Nilai bawaan di `src/config/site.ts` dan `src/config/profil.ts` hanya dipakai
+ketika kolom CMS masih kosong. Nilai placeholder (awalan `TODO` atau `DRAF`)
+tidak pernah tampil di halaman publik, dan `npm run cek:konten` menggagalkan
+`build:rilis` selama masih ada.
 
 ## Struktur
 
 ```
 db/migrations/       Migrasi SQL bernomor (dijalankan scripts/migrate.ts)
 scripts/             Skrip operasional dan uji backend (migrate, seed, uji media)
-src/app/             Halaman, Route Handler, Route metadata, dan Server Action
-src/app/actions/     Server Action: albums, kontak, konten, messages, profil, settings, staff
-src/app/globals.css  Token desain "Blok Warna Madrasah"
-src/components/site/ Komponen FE: dasar, blok, kerangka, navigasi, wa
+src/app/             Halaman publik, not-found, error, Route Handler
+src/app/admin/       CMS: halaman dan Server Action per modul
+src/app/globals.css  Token desain "Blok Warna Madrasah" + token semantik CMS
+src/components/site/ Komponen FE: dasar, blok, kerangka, navigasi, wa, lightbox
+src/components/admin/ Komponen CMS: shell, panel, editor daftar, tab
 src/config/          site.ts (identitas & NAP), profil.ts (konten), navigation.ts
 src/lib/             Klien DB, kueri bertipe, skema Zod, auth, rate limit, media, Telegram
 src/types/           Deklarasi tipe untuk NextAuth

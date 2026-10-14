@@ -37,13 +37,13 @@ export default async function HalamanEkstrakurikuler() {
               className="h-1.5 w-14 rounded-full bg-jingga-terang"
               aria-hidden="true"
             />
-            <p className="label-bagian mt-4 text-jingga-terang">
+            <p className="label-bagian mt-4 text-white">
               Ekstrakurikuler
             </p>
             <h1 className="mt-3 max-w-3xl text-display">
               Kegiatan di Luar Kelas
             </h1>
-            <p className="mt-5 max-w-2xl text-lg leading-relaxed text-white/90">
+            <p className="mt-5 max-w-2xl text-lg leading-relaxed text-white/95">
               Anak menemukan bakat, belajar kerja sama, dan mengembangkan
               karakter lewat kegiatan yang dibina guru.
             </p>

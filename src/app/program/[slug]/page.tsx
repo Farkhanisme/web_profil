@@ -84,10 +84,10 @@ export default async function HalamanProgramDetail({ params }: { params: Promise
               className="mt-6 h-1.5 w-14 rounded-full bg-jingga-terang"
               aria-hidden="true"
             />
-            <p className="label-bagian mt-4 text-jingga-terang">Program</p>
+            <p className="label-bagian mt-4 text-white">Program</p>
             <h1 className="mt-3 max-w-3xl text-display">{program.name}</h1>
             {terisi(program.summary) && (
-              <p className="mt-5 max-w-2xl text-lg leading-relaxed text-white/90">
+              <p className="mt-5 max-w-2xl text-lg leading-relaxed text-white/95">
                 {program.summary}
               </p>
             )}
@@ -112,7 +112,7 @@ export default async function HalamanProgramDetail({ params }: { params: Promise
             )}
 
             <article className="max-w-3xl space-y-6 text-lg leading-relaxed text-tinta-2">
-              <div className="prose prose-slate max-w-none">
+              <div>
                 {program.description.split("\n\n").map((paragraf, i) => (
                   <p key={i}>{paragraf}</p>
                 ))}

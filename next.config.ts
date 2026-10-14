@@ -8,12 +8,19 @@ import type { NextConfig } from "next";
  * Token bot, rahasia Auth.js, dan kredensial Turso hanya ada di
  * variabel lingkungan server, tidak pernah sampai ke peramban.
  */
+/** `unsafe-eval` hanya dibutuhkan mode pengembangan (React Refresh). */
+const MODE_PENGEMBANGAN = process.env.NODE_ENV !== "production";
+
 const KEBIJAKAN_CSP = [
   "default-src 'self'",
   // 'unsafe-inline' pada style diperlukan karena Tailwind dan blok
   // warna tema ditulis sebagai tag <style> di dalam <head>.
   "style-src 'self' 'unsafe-inline'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+  // Di produksi, eval dilarang: sehingga satu celah injeksi skrip tidak
+  // langsung bisa menjalankan kode sembarang lewat `eval`.
+  `script-src 'self' 'unsafe-inline'${
+    MODE_PENGEMBANGAN ? " 'unsafe-eval'" : ""
+  }`,
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
   // Peta Google dan gambar dari CDN-nya.

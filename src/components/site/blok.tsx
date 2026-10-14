@@ -171,11 +171,6 @@ export async function Footer({ situs }: { situs: IsiSitus }) {
                   </Link>
                 </li>
               ))}
-              <li>
-                <Link href="/#daftar" className="text-putih/80 hover:text-putih">
-                  Pendaftaran
-                </Link>
-              </li>
             </ul>
           </div>
         </div>
