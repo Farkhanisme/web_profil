@@ -58,6 +58,55 @@
   /* ---- Warna WhatsApp resmi (tombol ajakan) ---- */
   --wa: #25d366; /* tombol besar: teks putih, ukuran besar, lolos 3:1 */
   --wa-gelap: #128c7e;
+
+  /* =====================================================================
+     TOKEN SEMANTIK UNTUK CMS (/admin)
+     ---------------------------------------------------------------------
+     Komponen CMS memakai penamaan shadcn (primary, muted, card, …), bukan
+     nama blok warna. Saat globals.css ditulis ulang untuk "Blok Warna
+     Madrasah", sekumpulan token ini ikut hilang sehingga seluruh kelas
+     seperti `bg-card`, `text-muted-foreground`, atau `bg-primary-soft`
+     tidak menghasilkan CSS apa pun, dan antarmuka CMS tampil tanpa warna.
+
+     Nilainya dipetakan ke palet Blok Warna supaya CMS dan halaman publik
+     terasa satu produk. Rasio kontras yang sudah dihitung:
+
+       putih di primary        5,48:1   teks utama CMS
+       primary di soft         4,84:1   label & tombol terpilih
+       tinta-2 di muted        7,35:1   teks sekunder
+       putih di destructive    6,47:1   teks galat
+       ring di putih           8,72:1   cincin fokus
+       input di putih          4,76:1   garis tepi isian (butuh minimal 3:1)
+
+     `--border` sengaja tetap tipis (1,48:1): ia pemisah visual, bukan
+     komponen interaktif, jadi tidak tunduk pada WCAG 1.4.11.
+     ===================================================================== */
+  --primary: var(--hijau);
+  --primary-foreground: var(--putih);
+  --primary-soft: var(--hijau-muda);
+  --primary-deep: var(--hijau-tua);
+
+  --background: var(--putih);
+  --foreground: var(--tinta);
+
+  --card: var(--putih);
+  --card-foreground: var(--tinta);
+  --popover: var(--putih);
+  --popover-foreground: var(--tinta);
+
+  --secondary: var(--hijau-muda);
+  --secondary-foreground: var(--hijau-tua);
+  --muted: #f1f5f9;
+  --muted-foreground: var(--tinta-2);
+  --accent: var(--hijau-muda);
+  --accent-foreground: var(--hijau-tua);
+
+  --destructive: #b91c1c;
+  --destructive-foreground: var(--putih);
+
+  --border: var(--garis);
+  --input: var(--tinta-3);
+  --ring: var(--biru);
 }
 
 /* =====================================================================
@@ -93,6 +142,29 @@
 
   --color-wa: var(--wa);
   --color-wa-gelap: var(--wa-gelap);
+
+  /* Token semantik CMS — lihat penjelasan panjang di blok :root. */
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-deep: var(--primary-deep);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 
   --font-sans: var(--tf-sans);
   --font-judul: var(--tf-judul);

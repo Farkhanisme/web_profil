@@ -45,7 +45,7 @@ async function AlbumLainAsync({ albumId }: { albumId: string }) {
             key={a.id}
             href={`/galeri/${a.slug}`}
             nama={a.title}
-            ringkas={`${a.photoCount} foto${a.description ? ` &middot; ${a.description}` : ""}`}
+            ringkas={`${a.photoCount} foto${a.description ? ` · ${a.description}` : ""}`}
           />
         ))}
       </ul>

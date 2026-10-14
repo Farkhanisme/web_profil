@@ -129,9 +129,34 @@ export function teleponTerisi(contact: IsiSitus["contact"]): boolean {
   return terisi(contact.phone);
 }
 
-/** True bila ada nomor WhatsApp yang layak. */
+/**
+ * Nomor contoh yang pernah dipakai di repositori ini.
+ *
+ * Nilai ini tidak bisa dideteksi oleh `masihPlaceholder` karena bentuknya
+ * angka biasa, bukan teks berawalan TODO/DRAF. Padahal dampaknya besar:
+ * tombol WhatsApp di seluruh halaman akan mengarah ke nomor milik orang
+ * lain, dan nomor itu ikut bocor ke `llms.txt` sehingga mesin AI ikut
+ * menyalinnya.
+ */
+const NOMOR_CONTOH = new Set(["6281234567890"]);
+
+/** True bila nomor terasa seperti angka contoh, bukan nomor asli. */
+function nomorContoh(nilai: string): boolean {
+  const angka = nilai.replace(/\D/g, "");
+  if (angka.length < 8) return false;
+  if (NOMOR_CONTOH.has(angka)) return true;
+  // Satu digit yang diulang-ulang (11111111, 000000000) tidak pernah
+  // menjadi nomor telepon yang sah.
+  return /^(\d)\1+$/.test(angka);
+}
+
+/** True bila ada nomor WhatsApp yang layak ditampilkan. */
 export function whatsappTerisi(contact: IsiSitus["contact"]): boolean {
-  return terisi(contact.whatsapp) && /\d{8,}/.test(contact.whatsapp);
+  return (
+    terisi(contact.whatsapp) &&
+    /\d{8,}/.test(contact.whatsapp) &&
+    !nomorContoh(contact.whatsapp)
+  );
 }
 
 /**

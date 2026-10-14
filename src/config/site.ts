@@ -72,9 +72,14 @@ export const site: IsiSitus = {
     email: "TODO email sekolah",
     /**
      * Nomor WhatsApp sekolah dalam format internasional tanpa tanda "+".
-     * TODO(RILIS): ganti dengan nomor resmi sekolah sebelum production.
+     *
+     * PENTING: nilai bawaan sengaja berupa placeholder. Sebelumnya di sini
+     * ada angka contoh (6281234567890) yang lolos pemeriksaan dan membuat
+     * tombol "Chat WhatsApp" mengarah ke nomor milik orang lain. Selama
+     * nomor ini masih placeholder, tombol WhatsApp disembunyikan di seluruh
+     * halaman (lihat `whatsappTerisi`).
      */
-    whatsapp: "6281234567890",
+    whatsapp: "TODO nomor WhatsApp sekolah (format internasional tanpa +)",
   },
 
   /** Jam layanan — dipakai untuk JSON-LD `openingHoursSpecification` */

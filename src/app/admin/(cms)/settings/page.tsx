@@ -19,18 +19,20 @@ export default async function HalamanPengaturan({
     <>
       <KepalaHalaman
         judul="Pengaturan"
-        deskripsi="Perubahan tampil di seluruh halaman publik dalam hitungan detik, tanpa perlu deploy ulang."
+        deskripsi="Logo dan warna antarmuka CMS. Isi halaman publik diatur lewat modul masing-masing."
       />
 
       {params.saved === "1" ? (
         <div className="mb-4 rounded-lg border border-primary/30 bg-primary-soft px-4 py-3 text-sm text-primary">
-          Warna tema tersimpan dan sudah berlaku di seluruh halaman publik.
+          Warna tersimpan dan dipakai sebagai warna utama antarmuka CMS
+          serta warna bilah peramban. Halaman publik memakai palet Blok
+          Warna yang tetap.
         </div>
       ) : null}
       {params.logo === "1" ? (
         <div className="mb-4 rounded-lg border border-primary/30 bg-primary-soft px-4 py-3 text-sm text-primary">
-          Logo tersimpan dan sudah dipakai di header, footer, favicon, dan
-          gambar tautan media sosial.
+          Logo tersimpan dan dipakai sebagai gambar pratinjau media sosial
+          (Open Graph) untuk halaman yang tidak punya gambar sendiri.
         </div>
       ) : null}
       {params.reset === "1" ? (
@@ -41,11 +43,14 @@ export default async function HalamanPengaturan({
 
       <section className="mb-8">
         <h2 className="mb-3 text-lg font-semibold tracking-tight">
-          Warna tema
+          Warna antarmuka CMS
         </h2>
         <p className="mb-4 max-w-2xl text-sm text-muted-foreground">
-          Warna utama dipakai pada tombol, tautan, dan header. Warna aksen
-          dipakai pada label dan sorotan. Mode gelap belum tersedia.
+          Warna utama dipakai pada tombol, tautan, dan sorotan di dalam CMS,
+          serta warna bilah peramban. Halaman publik memakai palet Blok
+          Warna yang tetap: hijau untuk profil, jingga untuk program dan
+          ekstrakurikuler, biru untuk guru dan galeri, kuning untuk
+          pendaftaran. Mode gelap belum tersedia.
         </p>
         <FormTema
           awal={{ primary: pengaturan.themePrimary, accent: pengaturan.themeAccent }}

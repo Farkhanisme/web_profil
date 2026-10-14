@@ -7,10 +7,11 @@
  *   npm run cek:konten
  */
 
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { loadEnv } from "./load-env";
 import { createDb } from "../src/lib/db/client";
+import { whatsappTerisi, terisi, type IsiSitus } from "../src/lib/konten";
 
 loadEnv();
 
@@ -18,15 +19,26 @@ loadEnv();
  * Hanya berkas yang berisi KONTEN. Komponen yang memeriksa placeholder
  * (misalnya `startsWith("TODO")`) sengaja tidak ikut dipindai, karena
  * kemunculan kata TODO di sana justru alat untuk menyembunyikan placeholder.
+ *
+ * Daftar ini menyesuaikan struktur folder yang sedang dipakai. Berkas yang
+ * sudah dipindah tidak boleh membuat skrip ini berhenti dengan galat —
+ * lebih baik dilewati pelan daripada menutupi laporan.
  */
 const BERKAS = [
   "src/config/site.ts",
   "src/config/profil.ts",
-  "src/app/(public)/page.tsx",
-  "src/app/(public)/kebijakan-privasi/page.tsx",
-  "src/components/site/hero.tsx",
-  "src/components/site/statistik.tsx",
+  "src/app/page.tsx",
+  "src/app/profil/page.tsx",
+  "src/app/kebijakan-privasi/page.tsx",
+  "src/app/kontak/page.tsx",
 ];
+
+/**
+ * Nomor contoh yang pernah bocor ke halaman publik. Bentuknya angka biasa,
+ * jadi `masihPlaceholder` tidak menangkapnya; tapi dampaknya besar karena
+ * tombol WhatsApp mengarah ke nomor milik orang lain.
+ */
+const NOMOR_CONTOH = ["6281234567890"];
 
 interface Temuan {
   berkas: string;
@@ -38,7 +50,14 @@ function pindai(): Temuan[] {
   const hasil: Temuan[] = [];
 
   for (const relatif of BERKAS) {
-    const isi = readFileSync(join(process.cwd(), relatif), "utf8");
+    const jalur = join(process.cwd(), relatif);
+
+    if (!existsSync(jalur)) {
+      console.warn(`   (melewati berkas yang sudah tidak ada: ${relatif})`);
+      continue;
+    }
+
+    const isi = readFileSync(jalur, "utf8");
     const baris = isi.split("\n");
 
     baris.forEach((teks, i) => {
@@ -58,12 +77,24 @@ function pindai(): Temuan[] {
         bersih.includes(".filter(") ||
         bersih.includes('includes("TODO') ||
         bersih.includes('startsWith("TODO")') ||
-        bersih.includes('includes("DRAF:")')
+        bersih.includes('includes("DRAF:")') ||
+        bersih.includes("NOMOR_CONTOH")
       ) {
         return;
       }
       if (bersih.includes("DRAF:") || bersih.includes("TODO")) {
         hasil.push({ berkas: relatif, baris: i + 1, teks: bersih.slice(0, 110) });
+        return;
+      }
+      for (const nomor of NOMOR_CONTOH) {
+        if (bersih.includes(nomor)) {
+          hasil.push({
+            berkas: relatif,
+            baris: i + 1,
+            teks: `NOMOR CONTOH: ${bersih.slice(0, 90)}`,
+          });
+          return;
+        }
       }
     });
   }
@@ -103,6 +134,25 @@ async function periksaDatabase(): Promise<string[]> {
   if (Number(contoh.rows[0]?.c ?? 0) > 0) {
     catatan.push(
       `Masih ada ${contoh.rows[0]?.c} baris data contoh (awalan id "demo-") yang harus dihapus.`,
+    );
+  }
+
+  // Nomor WhatsApp di database. Nilai kosong atau bertanda TODO tidak
+  // masalah karena tombolnya sengaja disembunyikan. Yang berbahaya adalah
+  // nomor yang tampak "terisi" tetapi bukan nomor asli: bentuknya lolos
+  // pemeriksaan, tombol pun muncul, hanya saja mengarah ke nomor orang lain.
+  const wa = await db.execute("SELECT whatsapp FROM profil_content WHERE id = 1");
+  const barisWa = wa.rows[0] as { whatsapp?: string | null } | undefined;
+  const nomorWa = barisWa?.whatsapp?.trim() ?? "";
+
+  if (
+    nomorWa !== "" &&
+    terisi(nomorWa) &&
+    !whatsappTerisi({ whatsapp: nomorWa } as IsiSitus["contact"])
+  ) {
+    catatan.push(
+      `Nomor WhatsApp di CMS ("${nomorWa}") bukan nomor yang bisa dipakai. ` +
+        "Ganti dengan nomor resmi sekolah atau kosongkan agar tombol disembunyikan.",
     );
   }
 
