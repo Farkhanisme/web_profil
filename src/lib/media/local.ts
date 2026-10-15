@@ -1,6 +1,7 @@
 import "server-only";
 
 import sharp from "sharp";
+import { GalatMedia } from "./galat";
 import type { MediaClient, StoredFile } from "./types";
 
 /**
@@ -32,7 +33,19 @@ export class LocalMediaClient implements MediaClient {
   async save(input: Buffer, mime: string): Promise<StoredFile> {
     const { newId } = await import("@/lib/ids");
     const id = newId();
-    await simpanKeDisk(id, input);
+
+    // Bila disk penuh atau direktori tidak bisa dibuat, katakan apa
+    // yang sebenarnya terjadi supaya tidak terlihat seperti galat Telegram.
+    try {
+      await simpanKeDisk(id, input);
+    } catch (error) {
+      throw new GalatMedia(
+        "penyimpanan",
+        `Server tidak dapat menulis berkas ke .data/media: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
 
     const meta = await sharp(input).metadata();
 

@@ -1,6 +1,11 @@
 import "server-only";
 
 import sharp from "sharp";
+import {
+  GalatMedia,
+  klasifikasiGalat,
+  type BalasanTelegram,
+} from "./galat";
 import type { MediaClient, StoredFile } from "./types";
 
 /**
@@ -17,13 +22,8 @@ import type { MediaClient, StoredFile } from "./types";
 
 const API = "https://api.telegram.org";
 
-interface BalasanTelegram {
-  ok: boolean;
-  result?: unknown;
-  description?: string;
-  error_code?: number;
-  parameters?: { retry_after?: number };
-}
+/** Tunggu `ms` milidetik. */
+const jeda = (ms: number) => new Promise<void>((selesai) => setTimeout(selesai, ms));
 
 export class TelegramMediaClient implements MediaClient {
   readonly isRemote = true;
@@ -33,44 +33,95 @@ export class TelegramMediaClient implements MediaClient {
     private readonly chatId: string,
   ) {}
 
-  /** Panggil API Telegram dengan percobaan ulang untuk 429 dan galat jaringan. */
+  /**
+   * Panggil API Telegram.
+   *
+   * Dicoba ulang hanya untuk hal yang bisa membaik dengan sendirinya:
+   * batas laju (429), gangguan sementara (5xx), dan kegagalan jaringan.
+   * Galat permanen — token dicabut (401), bot tanpa akses (403), id grup
+   * salah (400) — langsung dilempar supaya pengelola tahu apa yang harus
+   * diperbaiki, bukan menunggu tiga percobaan yang sia-sia.
+   */
   private async panggil(
     metode: "POST" | "GET",
     jalur: string,
     body?: FormData,
   ): Promise<BalasanTelegram> {
     const maksPercobaan = 4;
+    let galatAkhir: GalatMedia | null = null;
 
     for (let percobaan = 1; percobaan <= maksPercobaan; percobaan += 1) {
       const url = `${API}/bot${this.token}${jalur}`;
-      const res =
-        metode === "POST"
-          ? await fetch(url, { method: "POST", body })
-          : await fetch(url, { method: "GET" });
+      const res = await this.ambilRespon(url, metode, body);
 
-      const data = (await res.json()) as BalasanTelegram;
+      // Permintaan gagal di sisi jaringan.
+      if (res === null) {
+        galatAkhir = new GalatMedia(
+          "jaringan",
+          `Telegram tidak terjangkau (percobaan ${percobaan}/${maksPercobaan}).`,
+        );
+        if (percobaan < maksPercobaan) await jeda(1000 * percobaan);
+        continue;
+      }
+
+      const data = await this.bacaBalasan(res);
+
+      // Balasan bukan JSON — mis. halaman HTML galat dari penyedia jaringan.
+      if (data === null) {
+        galatAkhir = new GalatMedia(
+          "jaringan",
+          `Balasan Telegram tidak terbaca (HTTP ${res.status}, percobaan ${percobaan}/${maksPercobaan}).`,
+        );
+        if (percobaan < maksPercobaan) await jeda(1000 * percobaan);
+        continue;
+      }
 
       if (data.ok) return data;
 
       // 429: hormati retry_after dari Telegram, lalu coba lagi.
+      // Tidur hanya bila masih ada percobaan tersisa — menunggu
+      // `retry_after` pada percobaan terakhir hanya memperlambat galat.
       if (data.error_code === 429) {
         const tunggu = (data.parameters?.retry_after ?? 2) * 1000;
-        await new Promise((r) => setTimeout(r, Math.min(tunggu, 30_000)));
+        galatAkhir = klasifikasiGalat(data, res.status);
+        if (percobaan < maksPercobaan) await jeda(Math.min(tunggu, 30_000));
         continue;
       }
 
-      // Galat jaringan / server: coba lagi dengan jedaincreasing.
-      if (!res.ok && percobaan < maksPercobaan) {
-        await new Promise((r) => setTimeout(r, 1000 * percobaan));
-        continue;
-      }
+      const galat = klasifikasiGalat(data, res.status);
 
-      throw new Error(
-        `Telegram API gagal (${data.error_code ?? res.status}): ${data.description ?? "tidak diketahui"}`,
-      );
+      // 4xx selain 429 bersifat permanen: mencoba ulang hanya membuang waktu.
+      if (res.status < 500) throw galat;
+
+      galatAkhir = galat;
+      if (percobaan < maksPercobaan) await jeda(1000 * percobaan);
     }
 
-    throw new Error("Telegram API gagal setelah beberapa percobaan.");
+    throw galatAkhir ?? new GalatMedia("jaringan", "Telegram tidak terjangkau.");
+  }
+
+  /** Ambil respons. Mengembalikan `null` bila gagal di sisi jaringan. */
+  private async ambilRespon(
+    url: string,
+    metode: "POST" | "GET",
+    body?: FormData,
+  ): Promise<Response | null> {
+    try {
+      return metode === "POST"
+        ? await fetch(url, { method: "POST", body })
+        : await fetch(url, { method: "GET" });
+    } catch {
+      return null;
+    }
+  }
+
+  /** Baca balasan JSON. Mengembalikan `null` bila bukan JSON yang valid. */
+  private async bacaBalasan(res: Response): Promise<BalasanTelegram | null> {
+    try {
+      return (await res.json()) as BalasanTelegram;
+    } catch {
+      return null;
+    }
   }
 
   async save(input: Buffer, mime: string): Promise<StoredFile> {

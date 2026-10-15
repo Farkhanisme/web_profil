@@ -6,6 +6,8 @@ import { db } from "@/lib/db";
 import { newId } from "@/lib/ids";
 import { nowSeconds } from "@/lib/db/client";
 import { mediaClient } from "@/lib/media";
+import { GalatMedia, type KodeGalatMedia } from "@/lib/media/galat";
+import type { StoredFile } from "@/lib/media/types";
 
 /** Batas ukuran berkas masuk (hasil kompresi browser). */
 const MAKS_BYTES = 3 * 1024 * 1024;
@@ -17,6 +19,36 @@ const TIPE_DIIZINKAN = new Set([
   "image/jpeg",
   "image/svg+xml",
 ]);
+
+/**
+ * Pesan untuk pengelola, dipilih menurut kode galat penyimpanan.
+ *
+ * Tujuannya adalah pengelola TIDAK perlu membaca log server: tiap pesan
+ * harus langsung menyebut variabel lingkungan atau tindakan yang perlu
+ * diperbaiki.
+ */
+const PESAN_MEDIA: Record<KodeGalatMedia, string> = {
+  token:
+    "Token bot Telegram tidak sah atau sudah dicabut. Perbarui TELEGRAM_BOT_TOKEN di environment, lalu deploy ulang.",
+  akses:
+    "Bot belum punya akses ke grup. Jadikan bot sebagai anggota (disarankan admin) dari grup TELEGRAM_CHAT_ID.",
+  grup:
+    "Grup TELEGRAM_CHAT_ID tidak ditemukan. Periksa id grup dan pastikan bot masih menjadi anggotanya.",
+  laju:
+    "Telegram menolak permintaan karena terlalu sering. Tunggu sekitar satu menit, lalu coba lagi.",
+  server: "Telegram sedang bermasalah di sisi mereka. Coba lagi beberapa saat lagi.",
+  jaringan:
+    "Server tidak dapat menghubungi Telegram. Periksa koneksi keluar server, lalu coba lagi.",
+  penyimpanan:
+    "Server tidak dapat menulis berkas gambar ke penyimpanan. Periksa kapasitas disk, lalu coba lagi.",
+  "tak-dikenal": "Gagal menyimpan gambar. Coba lagi.",
+};
+
+/** Pilih pesan yang sesuai untuk galat yang dilempar saat menyimpan media. */
+function pesanGalatMedia(error: unknown): string {
+  if (error instanceof GalatMedia) return PESAN_MEDIA[error.kode];
+  return PESAN_MEDIA["tak-dikenal"];
+}
 
 /**
  * Unggah satu berkas gambar.
@@ -87,10 +119,20 @@ export async function POST(request: Request): Promise<Response> {
     );
   }
 
+  // Tahap 1: simpan berkasnya (Telegram atau disk lokal).
+  let tersimpan: StoredFile;
+  const client = mediaClient();
   try {
-    const client = mediaClient();
-    const tersimpan = await client.save(buffer, file.type);
+    tersimpan = await client.save(buffer, file.type);
+  } catch (error) {
+    console.error("Simpan berkas media gagal:", error);
+    return Response.json({ error: pesanGalatMedia(error) }, { status: 502 });
+  }
 
+  // Tahap 2: catat referensinya di database. Kalau tahap ini yang gagal,
+  // berkasnya sudah tersimpan, jadi pesannya harus berbeda — menyuruh
+  // mengunggah ulang akan membuat duplikat.
+  try {
     const id = newId();
     await db.execute({
       sql: `
@@ -121,9 +163,12 @@ export async function POST(request: Request): Promise<Response> {
       storage: client.isRemote ? "telegram" : "lokal",
     });
   } catch (error) {
-    console.error("Unggah media gagal:", error);
+    console.error("Mencatat media ke database gagal:", error);
     return Response.json(
-      { error: "Gagal menyimpan gambar. Coba lagi." },
+      {
+        error:
+          "Gambarnya sudah tersimpan, tetapi gagal dicatat di database. Coba lagi — bila terus gagal, periksa koneksi database.",
+      },
       { status: 502 },
     );
   }
