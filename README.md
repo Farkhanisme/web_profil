@@ -46,7 +46,8 @@ Turso. Ganti `TURSO_DATABASE_URL` dan `TURSO_AUTH_TOKEN` untuk memakai Turso.
 
 ## Skema database
 
-Sepuluh tabel dibuat oleh `db/migrations/0001_init.sql`:
+**Dua belas tabel**, dibuat oleh dua migrasi (`db/migrations/0001_init.sql`
+lalu `0002_profil_content.sql`):
 
 | Tabel              | Isi                                                        |
 | ------------------ | ---------------------------------------------------------- |
@@ -60,10 +61,11 @@ Sepuluh tabel dibuat oleh `db/migrations/0001_init.sql`:
 | `photos`           | foto di dalam album (ikut terhapus bila album dihapus)     |
 | `messages`         | pesan form kontak, `ip_hash` bukan IP mentah               |
 | `rate_limits`      | penghitung jendela untuk login dan form kontak             |
+| `profil_content`   | satu baris: profil & identitas yang diedit lewat CMS       |
 
 Konvensi: kolom `id` bertipe `TEXT` (nanoid), waktu epoch detik (`INTEGER`),
-boolean `INTEGER` 0/1. Menambah tabel cukup dengan membuat berkas
-`db/migrations/0002_....sql` lalu menjalankan `npm run migrate` — skrip
+boolean `INTEGER` 0/1. Menambah kolom atau tabel cukup dengan membuat berkas
+`db/migrations/0003_....sql` lalu menjalankan `npm run migrate` — skrip
 melewati migrasi yang sudah pernah diterapkan.
 
 ## Skrip

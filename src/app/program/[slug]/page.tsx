@@ -5,6 +5,7 @@ import { bacaSitus } from "@/lib/queries/profil";
 import { terisi } from "@/lib/konten";
 import { metadataDasar } from "@/lib/seo";
 import { JsonLd, jsonLdRemahRoti } from "@/lib/json-ld";
+import { paramSlug } from "@/lib/static-params";
 import { Kontainer } from "@/components/site/dasar";
 import { KartuProgram, JudulBagian } from "@/components/site/blok";
 import { Kerangka } from "@/components/site/kerangka";
@@ -18,8 +19,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 export async function generateStaticParams() {
-  const program = await programTerbit();
-  return program.map((p) => ({ slug: p.slug }));
+  // Database kosong tidak boleh menggagalkan build: lihat src/lib/static-params.ts.
+  return paramSlug(await programTerbit());
 }
 
 function ProgramLain({ programId }: { programId: string }) {

@@ -4,6 +4,7 @@ import { albumSemua, albumBySlug, fotoAlbum } from "@/lib/queries/albums";
 import { bacaSitus } from "@/lib/queries/profil";
 import { metadataDasar } from "@/lib/seo";
 import { JsonLd, jsonLdRemahRoti } from "@/lib/json-ld";
+import { paramSlug } from "@/lib/static-params";
 import { Kontainer } from "@/components/site/dasar";
 import { KartuProgram, JudulBagian } from "@/components/site/blok";
 import { Kerangka } from "@/components/site/kerangka";
@@ -18,8 +19,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 export async function generateStaticParams() {
-  const albums = await albumSemua();
-  return albums.map((a) => ({ slug: a.slug }));
+  // Database kosong tidak boleh menggagalkan build: lihat src/lib/static-params.ts.
+  return paramSlug(await albumSemua());
 }
 
 function AlbumLain({ albumId }: { albumId: string }) {
