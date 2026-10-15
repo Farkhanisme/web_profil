@@ -107,8 +107,14 @@ export async function simpanIdentitas(
   });
 
   if (!hasil.success) {
+    console.error("simpanProfilTeks validasi gagal:", JSON.stringify(hasil.error.issues));
     return {
-      error: "Periksa kembali data yang diisi.",
+      error:
+        "Periksa kembali data yang diisi: " +
+        hasil.error.issues
+          .map((i) => i.message)
+          .filter(Boolean)
+          .join(" "),
       fieldErrors: galatPerField(hasil.error),
     };
   }
@@ -185,8 +191,14 @@ export async function simpanProfilTeks(
   });
 
   if (!hasil.success) {
+    console.error("simpanProfilTeks validasi gagal:", JSON.stringify(hasil.error.issues));
     return {
-      error: "Periksa kembali data yang diisi.",
+      error:
+        "Periksa kembali data yang diisi: " +
+        hasil.error.issues
+          .map((i) => i.message)
+          .filter(Boolean)
+          .join(" "),
       fieldErrors: galatPerField(hasil.error),
     };
   }

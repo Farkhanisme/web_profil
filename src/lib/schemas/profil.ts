@@ -135,14 +135,14 @@ export const profilSchema = z.object({
 
   // Profil
   ringkasan: teks(1000, "Ringkasan profil"),
-  sejarah: daftarBaris(1500, "Paragraf sejarah"),
+  sejarah: z.array(daftarBaris(1500, "Paragraf sejarah")).default([]),
   visi: teks(1000, "Visi"),
-  misi: daftarBaris(1000, "Butir misi"),
+  misi: z.array(daftarBaris(1000, "Butir misi")).default([]),
 
   // Sambutan
   sambutan_nama: teks(160, "Nama kepala madrasah"),
   jabatan: teks(120, "Jabatan").optional(),
-  sambutan_teks: daftarBaris(2000, "Paragraf sambutan"),
+  sambutan_teks: z.array(daftarBaris(2000, "Paragraf sambutan")).default([]),
 
   // FAQ (pertanyaan & jawaban dikirim berpasangan lewat faq_json)
   faq_json: z

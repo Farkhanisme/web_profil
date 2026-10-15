@@ -76,6 +76,11 @@ export function FormProfilTeks({ profil }: { profil: IsiProfil }) {
           baris={4}
           placeholder="mis. Madrasah ini berdiri pada tahun 1998 atas Figs. inisiatif warga..."
         />
+        {galat("sejarah") ? (
+          <p className="text-xs font-medium text-destructive">
+            {galat("sejarah")}
+          </p>
+        ) : null}
       </Panel>
 
       <Panel className="space-y-4 p-4 sm:p-5">
@@ -103,6 +108,9 @@ export function FormProfilTeks({ profil }: { profil: IsiProfil }) {
             placeholder="mis. Membiasakan siswa disiplin belajar harian."
             tambahLabel="Tambah butir misi"
           />
+          {galat("misi") ? (
+            <p className="text-xs font-medium text-destructive">{galat("misi")}</p>
+          ) : null}
         </div>
       </Panel>
 
@@ -147,6 +155,11 @@ export function FormProfilTeks({ profil }: { profil: IsiProfil }) {
             baris={4}
             placeholder="Pembuka, isi, dan penutup. Dua paragraf sudah cukup untuk beranda."
           />
+          {galat("sambutan_teks") ? (
+            <p className="text-xs font-medium text-destructive">
+              {galat("sambutan_teks")}
+            </p>
+          ) : null}
         </div>
       </Panel>
 
