@@ -1,8 +1,7 @@
 import "server-only";
 
-import sharp from "sharp";
 import { GalatMedia } from "./galat";
-import type { MediaClient, StoredFile } from "./types";
+import type { DimensiGambar, MediaClient, StoredFile } from "./types";
 
 /**
  * Penyimpanan lokal untuk pengembangan.
@@ -30,7 +29,11 @@ async function bacaDariDisk(id: string): Promise<Buffer> {
 export class LocalMediaClient implements MediaClient {
   readonly isRemote = false;
 
-  async save(input: Buffer, mime: string): Promise<StoredFile> {
+  async save(
+    input: Buffer,
+    mime: string,
+    dimensi: DimensiGambar,
+  ): Promise<StoredFile> {
     const { newId } = await import("@/lib/ids");
     const id = newId();
 
@@ -47,8 +50,6 @@ export class LocalMediaClient implements MediaClient {
       );
     }
 
-    const meta = await sharp(input).metadata();
-
     return {
       // Pada mode lokal, kolom file_id dipakai untuk menyimpan nama berkas
       // di disk. Dengan begitu `load()` tidak perlu cabang terpisah.
@@ -56,8 +57,8 @@ export class LocalMediaClient implements MediaClient {
       fileUniqueId: id,
       messageId: null,
       mime,
-      width: meta.width ?? 0,
-      height: meta.height ?? 0,
+      width: dimensi.width,
+      height: dimensi.height,
       bytes: input.byteLength,
     };
   }

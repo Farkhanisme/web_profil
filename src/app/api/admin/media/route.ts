@@ -41,6 +41,8 @@ const PESAN_MEDIA: Record<KodeGalatMedia, string> = {
     "Server tidak dapat menghubungi Telegram. Periksa koneksi keluar server, lalu coba lagi.",
   penyimpanan:
     "Server tidak dapat menulis berkas gambar ke penyimpanan. Periksa kapasitas disk, lalu coba lagi.",
+  rujukan:
+    "Telegram menerima berkas tetapi tidak mengembalikannya. Unggah ulang; bila terus gagal, periksa log server.",
   "tak-dikenal": "Gagal menyimpan gambar. Coba lagi.",
 };
 
@@ -123,7 +125,7 @@ export async function POST(request: Request): Promise<Response> {
   let tersimpan: StoredFile;
   const client = mediaClient();
   try {
-    tersimpan = await client.save(buffer, file.type);
+    tersimpan = await client.save(buffer, file.type, { width, height });
   } catch (error) {
     console.error("Simpan berkas media gagal:", error);
     return Response.json({ error: pesanGalatMedia(error) }, { status: 502 });

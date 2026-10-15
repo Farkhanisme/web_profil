@@ -20,6 +20,8 @@ export type KodeGalatMedia =
   | "grup"
   /** kena batas laju Telegram (429), sudah dicoba ulang */
   | "laju"
+  /** balasan diterima tetapi tidak memuat rujukan file_id */
+  | "rujukan"
   /** sisi Telegram bermasalah (5xx) */
   | "server"
   /** Telegram tidak terjangkau dari server (jaringan / balasan tidak terbaca) */

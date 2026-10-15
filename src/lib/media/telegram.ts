@@ -1,12 +1,11 @@
 import "server-only";
 
-import sharp from "sharp";
 import {
   GalatMedia,
   klasifikasiGalat,
   type BalasanTelegram,
 } from "./galat";
-import type { MediaClient, StoredFile } from "./types";
+import type { DimensiGambar, MediaClient, StoredFile } from "./types";
 
 /**
  * Penyimpanan gambar melalui grup Telegram privat.
@@ -124,30 +123,41 @@ export class TelegramMediaClient implements MediaClient {
     }
   }
 
-  async save(input: Buffer, mime: string): Promise<StoredFile> {
+  async save(
+    input: Buffer,
+    mime: string,
+    dimensi: DimensiGambar,
+  ): Promise<StoredFile> {
     const form = new FormData();
     // Nama berkas dummy: Telegram butuh nama, tapi isinya tetap utuh.
     form.append("chat_id", this.chatId);
     form.append("document", new Blob([new Uint8Array(input)], { type: mime }), `gambar.${ekstensi(mime)}`);
 
     const hasil = await this.panggil("POST", "/sendDocument", form);
-    const pesan = hasil.result as
-      | { message_id: number; document: { file_id: string; file_unique_id: string } }
-      | undefined;
+    const pesan = hasil.result as Record<string, unknown> | undefined;
+    const rujukan = ambilRujukanBerkas(pesan);
 
-    if (!pesan?.document) {
-      throw new Error("Telegram tidak mengembalikan dokumen.");
+    /*
+     * Pada titik ini berkas SUDAH berada di grup. Bila rujukannya tidak
+     * terbaca, lempar galat bertipe (bukan Error biasa) supaya pesan yang
+     * sampai ke pengelola menjelaskan apa yang sebenarnya terjadi, bukan
+     * sekadar "gagal menyimpan" yang menyaratkan unggah ulang sia-sia.
+     */
+    if (!rujukan) {
+      const kunci = pesan ? Object.keys(pesan).join(", ") : "(balasan kosong)";
+      throw new GalatMedia(
+        "rujukan",
+        `Telegram menerima berkas tetapi tidak mengembalikan file_id. Kunci balasan: ${kunci}`,
+      );
     }
 
-    const meta = await sharp(input).metadata();
-
     return {
-      fileId: pesan.document.file_id,
-      fileUniqueId: pesan.document.file_unique_id,
-      messageId: pesan.message_id,
+      fileId: rujukan.fileId,
+      fileUniqueId: rujukan.fileUniqueId,
+      messageId: typeof pesan?.message_id === "number" ? pesan.message_id : null,
       mime,
-      width: meta.width ?? 0,
-      height: meta.height ?? 0,
+      width: dimensi.width,
+      height: dimensi.height,
       bytes: input.byteLength,
     };
   }
@@ -189,4 +199,31 @@ function ekstensi(mime: string): string {
     default:
       return "bin";
   }
+}
+
+/**
+ * Cari rujukan berkas di balasan `sendDocument`.
+ *
+ * Telegram biasanya menaruhnya di `document`, tapi untuk berkas tertentu
+ * (mis. `.webp` yang diperlakukan sebagai stiker) bisa muncul di kunci lain
+ * seperti `sticker`. Yang kita butuh hanya `file_id` — pengunduhan lewat
+ * `/media/[id]` memakai `getFile` yang berlaku untuk semua jenis berkas.
+ */
+function ambilRujukanBerkas(
+  pesan: Record<string, unknown> | undefined,
+): { fileId: string; fileUniqueId: string | null } | null {
+  if (!pesan) return null;
+
+  const kunci = ["document", "photo", "sticker", "video", "animation"] as const;
+  for (const k of kunci) {
+    const isi = pesan[k] as { file_id?: string; file_unique_id?: string } | undefined;
+    if (typeof isi?.file_id === "string") {
+      return {
+        fileId: isi.file_id,
+        fileUniqueId: isi.file_unique_id ?? null,
+      };
+    }
+  }
+
+  return null;
 }

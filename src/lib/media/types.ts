@@ -21,11 +21,27 @@ export interface StoredFile {
   bytes: number;
 }
 
+/**
+ * Dimensi berkas menurut pemeriksaan di route unggah.
+ *
+ * Dimensi diteruskan ke klien penyimpanan supaya `save()` tidak perlu
+ * memanggil `sharp` untuk kedua kalinya — panggilan kedua itulah yang
+ * bisa gagal sesudah berkas sudah terlanjur terkirim ke Telegram.
+ */
+export interface DimensiGambar {
+  width: number;
+  height: number;
+}
+
 export interface MediaClient {
   /** true bila memakai penyimpanan sungguhan, false bila mode lokal */
   readonly isRemote: boolean;
   /** Simpan satu gambar dan kembalikan referensinya. */
-  save(input: Buffer, mime: string): Promise<StoredFile>;
+  save(
+    input: Buffer,
+    mime: string,
+    dimensi: DimensiGambar,
+  ): Promise<StoredFile>;
   /** Ambil isi berkas berdasarkan referensi. */
   load(ref: Pick<StoredFile, "fileId" | "messageId">): Promise<Buffer>;
   /** Kirim teks ke grup (notifikasi pesan kontak). */
