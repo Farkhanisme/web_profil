@@ -120,13 +120,28 @@ export type SiteConfig = typeof site;
 
 /** URL absolut untuk canonical/OG. Fallback ke domain Vercel saat env kosong. */
 export function baseUrl(): string {
-  const fromEnv =
+  const dariEnv =
     site.url ||
     process.env.NEXT_PUBLIC_SITE_URL ||
     process.env.VERCEL_PROJECT_PRODUCTION_URL ||
     process.env.VERCEL_URL;
-  if (fromEnv) return fromEnv.replace(/\/$/, "");
-  return "http://localhost:3000";
+  if (!dariEnv) return "http://localhost:3000";
+  return tambahProtokol(dariEnv).replace(/\/$/, "");
+}
+
+/**
+ * Tambahkan `https://` pada nilai yang belum punya skema protokol.
+ *
+ * Variabel bawaan Vercel `VERCEL_PROJECT_PRODUCTION_URL` dan `VERCEL_URL`
+ * sengaja diberikan TANPA protokol (mis. `sekolah.vercel.app`). Tanpa
+ * penyamaran ini, `new URL(baseUrl())` di root layout melempar
+ * ERR_INVALID_URL dan menggagalkan build.
+ */
+function tambahProtokol(url: string): string {
+  const bersih = url.trim();
+  return /^[a-z][a-z0-9+.-]*:\/\//i.test(bersih)
+    ? bersih
+    : `https://${bersih}`;
 }
 
 export function absoluteUrl(path: string): string {
