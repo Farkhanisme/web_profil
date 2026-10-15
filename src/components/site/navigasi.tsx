@@ -49,7 +49,7 @@ export function NavigasiAtas({
               {nama.charAt(0).toUpperCase()}
             </span>
           )}
-          <span className="truncate font-judul text-[1.0625rem] leading-none font-bold">
+          <span className="truncate font-judul text-[1.0625rem] leading-normal font-bold">
             {nama}
           </span>
         </Link>

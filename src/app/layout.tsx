@@ -13,6 +13,7 @@ import {
 } from "@/lib/seo";
 import { hitungTema } from "@/lib/color";
 import { blokCssTema, warnaMetaPeramban } from "@/lib/theme-css";
+import { ResetGulir } from "@/components/site/scroll-reset";
 
 /**
  * Root layout: kerangka HTML, metadata SEO, dan pewarnaan tema dari CMS.
@@ -134,6 +135,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         >
           Lompat ke konten
         </a>
+        <ResetGulir />
         {children}
       </body>
     </html>
